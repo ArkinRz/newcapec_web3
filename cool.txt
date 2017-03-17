@@ -1,1 +1,4 @@
-WAWAAWAWWAWAWAWAWAAWWAWAAW
+WAWAAWAWWAWAWAWAWAAWWAWAAWgit did not exit cleanly (exit code 128) (2484 ms @ 2017/3/17 21:06:04)
+git did not exit cleanly (exit code 128) (2484 ms @ 2017/3/17 21:06:04)
+git did not exit cleanly (exit code 128) (2484 ms @ 2017/3/17 21:06:04)
+git did not exit cleanly (exit code 128) (2484 ms @ 2017/3/17 21:06:04)
