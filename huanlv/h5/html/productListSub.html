@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>产品页面</title>
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="stylesheet" href="../css/mui.min.css">
+ <!--App自定义的css-->
+<link rel="stylesheet" type="text/css" href="../css/main.css">
+<link rel="stylesheet" type="text/css" href="../css/hl_style.css">
+<style type="text/css">
+.hl_mainbg .mui-pt-bs{padding-bottom: 10px;}
+</style>
+</head>
+<body class="hl_mainbg">
+<!--下拉刷新容器-->
+<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+	<div class="mui-scroll">
+		<!--数据列表-->
+		<ul class="mui-table-view mui-pt-bs product_view">
+			
+		</ul>
+	</div>
+</div>
+
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/common.js"></script>
+<script>
+var number_everypage =10 ;//每页显示条数
+var currentNum =0;//当前底部第几条
+var pageNo = 0; //页数
+var count = 0;	
+var prodtype = 0;//产品类型
+var totalNum;
+/**
+ * 产品列表获取
+ */
+function getOrderList(prodtype, pageNo ) {
+    var data = {"prodtype" :prodtype,"pageNo" : pageNo };
+    HttpPost("GET","prod/getprodcut","json",data);
+}
+mui.init({
+	pullRefresh: {
+		container: '#pullrefresh',
+		down: {
+			callback: pulldownRefresh
+		},
+		up: {
+			contentrefresh: popupTIPS.tips4,
+			callback: pullupRefresh
+		}
+	}
+});
+//请求成功回调；
+function successFunc(productResp) {
+	mui('#pullrefresh').pullRefresh().enablePullupToRefresh();
+	if(productResp!=null && productResp !=''){
+		//console.log(productResp)
+		totalNum = productResp.data.totalPage;
+        var productList =productResp.data.pdList;
+        mui('#pullrefresh').pullRefresh().endPullupToRefresh(( pageNo > totalNum ));
+        var table = document.body.querySelector('.product_view');
+	    for(var i in productList){
+	    	var shoufu,lixi,shouxu;
+			//零首付
+			if(productList[i].payScale == '0'){
+				shoufu = '<em>0首付</em>';
+			}else if(productList[i].payScale == null || productList[i].payScale == ''){
+				shoufu = '';
+			}else{
+				shoufu = '<em>'+productList[i].payScale+'%首付</em>';
+			}
+			//零利息
+			if(productList[i].fundRate == '0'){
+				lixi = '<em>0利率</em>';
+			}else if(productList[i].fundRate == null || productList[i].fundRate == ''){
+				lixi = '';
+			}else{
+				lixi = '';
+			}
+			//零手续费
+			if(productList[i].procedureRate == '0'){
+				shouxu = '<em>0手续费</em>';
+			}else if(productList[i].procedureRate == null || productList[i].procedureRate == ''){
+				shouxu = '';
+			}else{
+				shouxu = '';
+			}
+			//超过两行（32个中文字)截取console.log( String( productList[i].prodTitle.length ) );
+			if( productList[i].prodTitle.length > 32 ){
+				productList[i].prodTitle = productList[i].prodTitle.substring(0,28) + "...";
+			}
+			
+	    	var id = productList[i].id;
+	    	var li = document.createElement('li');
+	    	li.id= id;
+			li.className = 'mui-table-view-cell mui-media';
+			li.innerHTML = '<a href="javascript:;"><img class="mui-media-object mui-pull-left" src="'+ productList[i].thumbImg+'">'
+			+'<div class="mui-media-body"><span class="hl_product_title">'+ productList[i].prodTitle +'</span><p class="mui-ellipsis">'
+			+productList[i].remarks+'</p>'
+			+'<p class="mui-ellipsis hl_hd"><cite>￥<span class="f12">'+FormatMoney(productList[i].frontShowPrice,2)+'</span></cite>'+ shoufu + lixi + shouxu +'</p>'
+			+'<p class="mui-ellipsis hl_yellow"><i class="">'+productList[i].stageNum+'</i>期 | ￥<i class="">'+FormatMoney(productList[i].paymentMoney,2)+'</i>/期</p></div></a>';
+			table.appendChild(li);
+	    }
+	}
+}
+function HttpPost(type,postUrl,dataType,data) {
+    $.ajax({
+	    type : type,                                                      
+	    url : CONST_SERVER_DOMAIN + postUrl,
+	    dataType : dataType,                                         
+	    data : data,
+	    timeout:10*1000,
+	    async:true,
+	    success : successFunc
+	});   
+}
+//点击列表跳转详情页，并把对应id传给后台;
+mui(".mui-table-view").on('tap','.mui-table-view-cell',function(){
+	 var detail = null;
+	  //获取id
+	  var id = this.getAttribute("id");
+	  mui.openWindow({
+		  url: "ProductDetail.html?id="+ id,
+	  });
+});
+
+mui.init({
+	gestureConfig: {
+		tap: true, //默认为true
+		doubletap: true, //默认为false
+		longtap: true, //默认为false
+		swipe: true, //默认为true
+		drag: true, //默认为true
+		hold: false, //默认为false，不监听
+		release: false //默认为false，不监听
+		},
+	pullRefresh: {
+		container: '#pullrefresh',
+		down: {
+			callback: pulldownRefresh
+		},
+		up: {
+			contentrefresh: popupTIPS.tips4,
+			callback: pullupRefresh
+		}
+	}
+});
+
+/**
+ * 下拉刷新具体业务实现
+ */
+function pulldownRefresh() {
+	mui('#pullrefresh').pullRefresh().disablePullupToRefresh();
+	var table = document.body.querySelector('.mui-table-view');
+	$('.mui-table-view').empty();//清空 table
+	setTimeout(function() {
+		pageNo = 1;
+		getOrderList(prodtype, pageNo );
+		mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+	}, 1500);
+}
+
+/**
+ * 上拉加载具体业务实现
+ */
+
+function pullupRefresh() {
+	setTimeout(function() {
+		pageNo++;
+		getOrderList(prodtype, pageNo);
+	}, 1500);
+	
+}
+
+if (mui.os.plus) {
+	mui.plusReady(function() {
+		setTimeout(function() {
+			mui('#pullrefresh').pullRefresh().pullupLoading();
+		}, 1000);
+
+	});
+} else {
+	mui.ready(function() {
+		mui('#pullrefresh').pullRefresh().pullupLoading();
+	});
+}
+</script>
+
+</body>
+</html>

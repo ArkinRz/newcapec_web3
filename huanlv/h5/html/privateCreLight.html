@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta http-equiv="Expires" content="-1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Pragma" content="no-cache">
+<title>信用点亮</title>
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+<!-- APP自用CSS -->
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/hl_style.css">
+</head>
+<body class="lck_bgWhite">
+<header class="mui-bar mui-bar-nav hl_headerSty">
+   <a class="mui-icon mui-icon-left-nav mui-pull-left" id="back"></a>
+   <h1 class="mui-title">信用点亮</h1>
+</header>
+<div class="hl_personCredit mt44">
+	<section class="hl_bespeakTips"></section>
+	<p class="f10 hl_black33 fb">点亮图标</p>
+	<p class="f9 hl_black33 mr20">请点击图中圆圈来点亮您的个人信用，点亮越多，额度越高。</p>
+</div>
+<!-- 中间占位 -->
+<section class="hl_bespeakTips10"></section>
+<div id="">
+	<ul class="hl_CredLight_ul" id="hl_CredLight_ul">
+		<li class="hl_CredLight_li">
+			<img id="hl_CredLight_earthN" class="hl_CredLight_earthN cL_01" src="../images/credLight/credLightN_01.png">
+			<img class="hl_CredLight_iconN  personalInformation" src="../images/credLight/credLightNicon_01@2x.png">
+			<span class="hl_CredLight_content  personalInformation">个人信息</span>
+		</li>
+		<li class="hl_CredLight_li">
+			<img class="hl_CredLight_earthN cL_02" src="../images/credLight/credLightN_02.png">
+			<img class="hl_CredLight_iconN userPhoneVer" src="../images/credLight/credLightNicon_02@2x.png">
+			<span class="hl_CredLight_content userPhoneVer">运营商</span>
+		</li>
+		<li class="hl_CredLight_li">
+			<img class="hl_CredLight_earthN cL_03" src="../images/credLight/credLightN_03.png">
+			<img class="hl_CredLight_iconN userSchoolrollVer" src="../images/credLight/credLightNicon_03@2x.png">
+			<span class="hl_CredLight_content userSchoolrollVer">学籍站</span>
+		</li>
+		<li class="hl_CredLight_li">
+			<img class="hl_CredLight_earthN cL_04" src="../images/credLight/credLightN_04.png">
+			<img class="hl_CredLight_iconN securCode" src="../images/credLight/credLightNicon_04@2x.png">
+			<span class="hl_CredLight_content securCode">设置安全码</span>
+		</li>
+		<li class="hl_CredLight_li">
+			<img class="hl_CredLight_earthN cL_05" src="../images/credLight/credLightN_05.png">
+			<img class="hl_CredLight_iconN Expect" src="../images/credLight/credLightNicon_05@2x.png">
+			<span class="hl_CredLight_content Expect">未开通</span>
+		</li>
+	</ul>
+</div>
+
+  <div class="popupbox">
+    <div class="bg"></div>
+    <div class="popbox">
+      <div class="content">您输入的密码或手机验证码不正确，请确认后重新输入。</div>
+      <div class="orc dn">
+          <div class="cancel">取消</div>
+          <div class="ok">确认</div>
+      </div>
+      <div class="justok">确认</div>
+    </div>
+  </div>
+
+<script src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/mui.min.js"></script>
+<script src="../js/common.js"></script>
+
+<script>
+	mui.init({
+		swipeBack:true //启用右滑关闭功能
+	});
+	//==================读取本地缓存;判断是否登录;
+	gotologin();
+	
+	var userId;
+	//判断用户登录状态,如果是已登录,读取
+	if( getLoginStatus() ){
+		//获取用户userId;
+		userId = getLocal("userId")|| getCookie( "userId");
+	}
+	
+	window.onload = function(){
+		var ohlCredLightUl = document.getElementById('hl_CredLight_ul');
+		var aImg = document.querySelectorAll('img');
+		
+		
+		for(var i=0; i<aImg.length;i++){
+			if(aImg[i].currentStyle){
+				w = aImg[i].currentStyle.width;
+			}else{
+				w = getComputedStyle(aImg[i],false).width;
+			}
+			
+			aImg[i].style.width = parseInt ( w ) / 2 + 'px';
+			
+		}
+
+
+	}
+
+
+	function getUserMode(){
+
+
+	    function aSuccessFunc(msg){
+	      if(!msg.data){
+	          return;
+	      }
+	      //储存用户状态
+	      if(isSessionStorageSupported()){
+              setLocal('auditState', msg.data.auditState);
+          }else{
+              setCookie('auditState', msg.data.auditState, 1);
+          }
+	      if( msg.data.auditState == 0  ){
+	      	$(".personalInformation").click(function(){
+				window.location.href = "initialMessage.html";
+			})
+			$(".userPhoneVer").click(function(){
+				mui.alert(popupTIPS.tips17)
+			})
+			$(".userSchoolrollVer").click(function(){
+				mui.alert(popupTIPS.tips17)
+			})
+			$(".securCode").click(function(){
+				mui.alert(popupTIPS.tips17)
+			})
+	      }else if ( msg.data.auditState == 1 ){
+	      	$(".personalInformation").click(function(){
+				window.location.href = "Information.html"
+			})
+			$(".userPhoneVer").click(function(){
+				mui.alert(popupTIPS.tips17)
+			})
+			$(".userSchoolrollVer").click(function(){
+				mui.alert(popupTIPS.tips17)
+			})
+			$(".securCode").click(function(){
+				mui.alert(popupTIPS.tips17)
+			})
+	      }else if ( msg.data.auditState == 2){
+			$(".userPhoneVer").click(function(){
+				window.location.href="userPhoneVer.html"
+				
+			})
+			$(".userSchoolrollVer").click(function(){
+				mui.alert(popupTIPS.tips18)
+			})
+			$(".securCode").click(function(){
+				mui.alert(popupTIPS.tips18)
+			})
+
+			$(".cL_01").attr("src","../images/credLight/credLightY_01.png")
+			$(".personalInformation").attr("src","../images/credLight/credLightYicon_01@2x.png")
+			$(".personalInformation").css("color","#fc0")
+				
+	      }else if ( msg.data.auditState == 3 ){
+	      	$(".userSchoolrollVer").click(function(){
+				window.location.href="userSchoolrollVer.html"
+			})
+			$(".securCode").click(function(){
+				mui.alert(popupTIPS.tips19)
+			})
+			$(".cL_01").attr("src","../images/credLight/credLightY_01.png")
+			$(".cL_02").attr("src","../images/credLight/credLightY_02.png")
+			$(".personalInformation").attr("src","../images/credLight/credLightYicon_01@2x.png")
+			$(".personalInformation").css("color","#fc0")
+			$(".userPhoneVer").attr("src","../images/credLight/credLightYicon_02@2x.png")
+			$(".userPhoneVer").css("color","#00C46C")
+	      }else if ( msg.data.auditState == 4 ){
+	      	$(".securCode").click(function(){
+				window.location.href="securCode.html"
+			})
+			$(".cL_01").attr("src","../images/credLight/credLightY_01.png")
+			$(".cL_02").attr("src","../images/credLight/credLightY_02.png")
+			$(".cL_03").attr("src","../images/credLight/credLightY_03.png")
+
+				$(".personalInformation").attr("src","../images/credLight/credLightYicon_01@2x.png")
+				$(".personalInformation").css("color","#fc0")
+				$(".userPhoneVer").attr("src","../images/credLight/credLightYicon_02@2x.png")
+				$(".userPhoneVer").css("color","#00C46C")
+				$(".userSchoolrollVer").attr("src","../images/credLight/credLightYicon_03@2x.png")
+				$(".userSchoolrollVer").css("color","#FF8D3A")
+
+	      }else if ( msg.data.auditState >= 5 ){
+	      	$(".cL_01").attr("src","../images/credLight/credLightY_01.png")
+			$(".cL_02").attr("src","../images/credLight/credLightY_02.png")
+			$(".cL_03").attr("src","../images/credLight/credLightY_03.png")
+			$(".cL_04").attr("src","../images/credLight/credLightY_04.png")
+	      		$(".personalInformation").attr("src","../images/credLight/credLightYicon_01@2x.png")
+				$(".personalInformation").css("color","#fc0")
+
+				$(".userPhoneVer").attr("src","../images/credLight/credLightYicon_02@2x.png")
+				$(".userPhoneVer").css("color","#00C46C")
+
+				$(".userSchoolrollVer").attr("src","../images/credLight/credLightYicon_03@2x.png")
+				$(".userSchoolrollVer").css("color","#FF8D3A")
+
+				$(".securCode").attr("src","../images/credLight/credLightYicon_04@2x.png")
+				$(".securCode").css("color","#2EA1F1")
+	      }
+	     
+	    }
+	    function aErrorFunc(){
+	      //console.log("错了，召唤师！")
+	    }
+	  
+	    var aRequestData =  "userId="+ userId;
+	    httpAjax('get', 'accuntState', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);  
+	}
+	getUserMode();
+    $('#back').click(function(){
+        var auditState = getLocal("auditState")|| getCookie("auditState");
+        if(auditState == '0'){
+            window.location = 'careerChoice.html';
+        }else{
+            window.location = 'privateCredit.html?goback=null';
+        }
+    });
+
+$(".Expect").click(function(){
+	mui.alert(popupTIPS.tips64)
+})
+	
+	
+</script>
+</body>
+</html>

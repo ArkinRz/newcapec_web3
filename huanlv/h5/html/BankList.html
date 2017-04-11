@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>银行卡列表</title>
+  	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<!--标准mui.css-->
+    <link rel="stylesheet" href="../css/mui.min.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <style>
+        .title{margin: 20px 15px 7px;color: #6d6d72;font-size: 15px;}
+		.BankNull{text-align: center;font-size: 1.2rem;color: #b2b2b2;padding-top: 50px;}
+        .mui-navigate-right:after, .mui-push-right:after{ content:"";}
+        .mui-media-body{ font-size: 20px;}
+        .mui-table-view .mui-table-view-cell{padding: 15px 15px;}
+    </style>
+</head>
+
+<body style="background: #f9f9f9;">
+	<!--头部-->
+    <header class="mui-bar mui-bar-nav mui_nav_bg">
+        <a class="mui-icon mui-icon-plusempty mui-pull-right fb" id="addBankCard" href="javascript:void(0);"></a>
+        <a class="mui-icon mui-icon-left-nav mui-pull-left" href="private.html"></a>
+        <h1 class="mui-title">银行卡</h1>
+    </header>
+    <!--银行列表-->
+    <article style="margin-top: 50px;" id="banklist" class="banklist">
+    
+    	<!-- 没有银行卡时候的提示 -->
+		<div id="BankNull" class="BankNull" style="display: none;">暂未绑定银行卡</div>
+    
+    </article>
+
+    <div class="popup-password dn">
+        <div class="bg"></div>
+        <div class="pop-password" style="bottom:-360px;">
+            <div class="psd-tit">输入密码<span class="mui-icon mui-icon-closeempty gg" onclick="classPassBox()"></span></div>
+            <div class="ppd">
+                <form id="password" >
+                    <input readonly class="pass" type="password"maxlength="1"value=""><input readonly class="pass" type="password"maxlength="1"value=""><input readonly class="pass" type="password"maxlength="1"value=""><input readonly class="pass" type="password"maxlength="1"value=""><input readonly class="pass" type="password"maxlength="1"value=""><input readonly class="pass pass_right" type="password"maxlength="1"value="">
+                </form>
+            </div>
+            <p class="password_p"><a href="securCodeForget.html">忘记密码？</a></p>
+            <div id="keyboardDIV">
+                <div id="key" style="position:absolute;background-color:#A8A8A8;width:99.5%;bottom:0px;">
+                    <ul id="keyboard" style="font-size:20px;margin:2px -2px 1px 2px">
+                        <li class="symbol"><span class="off">1</span></li>
+                        <li class="symbol"><span class="off">2</span></li>
+                        <li class="symbol btn_number_"><span class="off">3</span></li>
+                        <li class="tab"><span class="off">4</span></li>
+                        <li class="symbol"><span class="off">5</span></li>
+                        <li class="symbol btn_number_"><span class="off">6</span></li>
+                        <li class="tab"><span class="off">7</span></li>
+                        <li class="symbol"><span class="off">8</span></li>
+                        <li class="symbol btn_number_"><span class="off">9</span></li>
+                        <li class="cancle btn_number_"></li>
+                        <li class="symbol"><span class="off">0</span></li>
+                        <li class="delete lastitem"><span class="mui-icon mui-icon-arrowthinleft"></span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="popupbox" style="z-index: 200;">
+    <div class="bg"></div>
+    <div class="popbox" style="">
+      <div class="content">密码有误</div>
+      <div class="orc">
+          <div class="cancel">忘记密码</div>
+          <div class="ok">重新输入</div>
+      </div>
+      <div class="justok dn">确认</div>
+    </div>
+</div>
+<!--mui自带类库-->
+<script src="../js/mui.min.js"></script>
+<!--jquery类库-->
+<script src="../js/jquery-1.9.1.min.js"></script>
+<!--MD5加密类库-->
+<script src="../js/md5-min.js"></script>
+<!--支付弹窗类库-->
+<script src="../js/dd.js"></script>
+<!--公共方法类库-->
+<script src="../js/common.js"></script>
+<script>
+	//==================读取本地缓存;判断是否登录;
+	gotologin();
+	//==================从缓存中获取userid; 
+	var userId;
+	//判断用户登录状态,如果是已登录,读取
+	if( getLoginStatus() ){
+		//获取用户userId;
+		userId = getLocal("userId")|| getCookie( "userId");
+	}
+	//==================请求方法封装;
+    function banklist(){
+        var param = {};
+            param["apiVersion"] = apiVersion;
+            param["devName"] = devName;
+            param["userId"] = userId;
+        //md5加密;
+        param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+		
+        var aRequestData = param ;
+        function aSuccessFunc(msg){
+            console.log(msg)
+        	if(msg.state == 'S'){
+        		 if(msg.data.length == 0){
+                 	$("#BankNull").css("display","block"); 
+                 }else{
+                 	$("#BankNull").css("display","none"); 
+                 	var str = "";
+                     for(var i in msg.data){
+                         str += "<div class='mui-card'><ul class='mui-table-view'><li class='mui-table-view-cell mui-media'><a href='javascript:;' class='mui-navigate-right'><img class='mui-media-object mui-pull-left' src='../images/hl_bank_" + msg.data[i].bankid + ".png'><div class='mui-media-body'> "+ msg.data[i].bankname +" <p class='mui-ellipsis'>储蓄卡</p><p>****&nbsp;****&nbsp;****&nbsp;<span>" + msg.data[i].cardno.slice(-4) +"</span></p></div></a></li></ul></div>"
+                     }
+
+                     $("#banklist").html(str);
+         			
+                     if( msg.data.length >= 1 ){
+                         $("#addBankCard").hide();
+                     }
+                 }
+        	}
+        	if(msg.state == 'F'){
+        		mui.alert(msg.msg , '提示');
+        	}
+        }
+        function aErrorFunc(){
+
+        }
+        httpAjax('POST','user/getcard', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);  
+
+    }
+
+    banklist();
+
+// 支付密码校验
+    function bankAddCheckSecurityCode(){
+
+        var param = {};
+            param["userId"] = userId;
+            // param["userId"] = getUrlParam(userId);
+            param["tradepwd"] = hex_md5( check_pass_word ).toUpperCase();   //MIMA
+            param["apiVersion"] = apiVersion;
+            param["devName"] = devName;
+        //md5加密;
+        param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+
+        var aRequestData = param ;
+        function aSuccessFunc(msg){
+            console.log(msg);
+            if(msg.state == "000"){
+                // mui.alert("密码有误")
+                $(".popupbox").show();
+                $(".ok").click(function(){
+                    $(".popupbox").hide();
+                     index = 0;
+                    // console.log(index);
+                    for(var len= 0;len<=passwords.elements.length;len++){
+                        if($(passwords.elements[len]).val()!=''){
+                            $(passwords.elements[len]).val('');
+                        }
+                    }
+                })
+                $(".cancel").click(function(){
+                    window.location.href="securCodeForget.html"
+                })
+            }
+
+            if(msg.state == "S"){
+                window.location.href="bankAdd.html"
+            }
+        }
+        function aErrorFunc(){}
+        httpAjax('POST','accounts/validtradepwd', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);  
+    }
+$("#addBankCard").click(function(){
+    getUserMode();
+})
+
+// 获取用户状态
+function getUserMode(){
+    function aSuccessFunc(msg){
+      console.log(msg.data);
+      if(msg.data.auditState < 5){
+        mui.alert(popupTIPS.tips5,function(){
+            window.location.href="privateCreLight.html"
+        })
+      }else if( msg.data.auditState >= 5 ){
+        $(".popup-password").show();
+        $(".pop-password").animate({bottom:"0"},200)
+      }
+    }
+    function aErrorFunc(){
+      // console.log("错了，召唤师！")
+    }
+    var aRequestData = "apiVersion=" + apiVersion +"&devName=" + devName + "&userId="+ userId;
+    httpAjax('get', 'accuntState', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);  
+    console.log(apiVersion,devName,userId);
+}
+
+</script>
+</body>
+</html>

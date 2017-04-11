@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>首页</title>
+  	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="Expires" content="-1">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Pragma" content="no-cache">
+	<!--标准mui.css-->
+    <link rel="stylesheet" href="../css/mui.min.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="../css/hl_style.css">
+</head>
+
+<body>
+	<!--幻灯片-->
+    <div id="slider" class="mui-slider" >
+        <div class="mui-slider-group mui-slider-loop pic-bs">
+            <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+            <div class="mui-slider-item mui-slider-item-duplicate">
+                <a href="#">
+                    <img src="../images/yuantiao.jpg">
+                </a>
+            </div>
+            
+            <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+            <!--<div class="mui-slider-item mui-slider-item-duplicate">
+                <a href="#">
+                    <img src="../images/shuijiao.jpg">
+                </a>
+            </div>-->
+        </div>
+        <div class="mui-slider-indicator">
+            <!--<div class="mui-indicator mui-active"></div>
+            <div class="mui-indicator"></div>
+            <div class="mui-indicator"></div>
+            <div class="mui-indicator"></div>-->
+        </div>
+    </div>
+	<!--九宫格-->
+	<div class="mui-card mui-mar">
+	    <ul class="mui-table-view mui-grid-view mui-grid-9">
+	        <li class="mui-table-view-cell mui-media mui-col-xs-4">
+	            <a href="OrderList.html" class="tz">
+	                <span class="mui-icon"><img src="../images/hl_index_dd.png"/></span>
+	                <div class="mui-media-body">订单</div>
+	            </a>
+	        </li>
+	        <li class="mui-table-view-cell mui-media mui-col-xs-4">
+	            <a href="privateCredit.html" class="tz">
+	                <span class="mui-icon"><img src="../images/hl_index_xy.png"/></span>
+	                <div class="mui-media-body">信用</div>
+	            </a>
+	        </li>
+	        <li class="mui-table-view-cell mui-media mui-col-xs-4">
+	            <a href="checkList.html" class="tz">
+	                <span class="mui-icon"><img src="../images/hl_index_zh.png"/></span>
+	                <div class="mui-media-body">账单</div>
+	            </a>
+	        </li>
+	        <li class="mui-table-view-cell mui-media mui-col-xs-4">
+	            <a href="javascript:;" class="Notice">
+	                <span class="mui-icon"><img src="../images/hl_index_gg.png"/></span>
+	                <div class="mui-media-body">活动公告</div>
+	            </a>
+	        </li>
+	        <li class="mui-table-view-cell mui-media mui-col-xs-4">
+	            <a href="javascript:;" class="Invitation">
+	                <span class="mui-icon"><img src="../images/hl_index_yq.png"/></span>
+	                <div class="mui-media-body">邀请有奖</div>
+	            </a>
+	        </li>
+	        <li class="mui-table-view-cell mui-media mui-col-xs-4">
+	            <a id="phoneBtn" href="javascript:void(0);" onClick="callMobile()">
+	                <span class="mui-icon"><img src="../images/hl_index_hf.png"/></span>
+	                <div class="mui-media-body">客服</div>
+	            </a>
+	        </li>
+	    </ul>
+	</div>
+    <!--图文混排-->
+    <article class="hot_pro hl_Blue f14"><cite></cite>热门产品</article>
+	<ul class="mui-table-view mui-pt-bs" id="proList">
+	    <li class="mui-table-view-cell mui-media">
+	        <a href="ProductDetail.html">
+	            <img class="mui-media-object mui-pull-left" src="../images/1.jpg">
+	            <div class="mui-media-body">
+	                呼市+希拉穆仁大草原+响沙湾双飞4日跟团游<草原美拍 宿舒适酒店>
+	                <p class="mui-ellipsis">7月11日-9月4日多团期</p>
+                    <p class="mui-ellipsis"><cite>￥0首付</cite><em>0利息</em><em>￥200/3期</em></p>
+                    <p class="mui-ellipsis hl_yellow"><i>3</i>期 | ￥<i>432.67</i>/期</p>
+	            </div>
+	        </a>
+	    </li>
+	    <li class="mui-table-view-cell mui-media">
+	        <a href="ProductDetail.html">
+	            <img class="mui-media-object mui-pull-left" src="../images/1.jpg">
+	            <div class="mui-media-body">
+	                呼市+希拉穆仁大草原+响沙湾双飞4日跟团游<草原美拍 宿舒适酒店>
+	                <p class="mui-ellipsis">7月11日-9月4日多团期</p>
+                    <p class="mui-ellipsis"><cite>￥0</cite>首付<em>0利息</em><em>￥200/3期</em></p>
+                    <p class="mui-ellipsis hl_yellow"><i>3</i>期 | ￥<i>432.67</i>/期</p>
+	            </div>
+	        </a>
+	    </li>
+	    <li class="mui-table-view-cell mui-media">
+	        <a href="ProductDetail.html">
+	            <img class="mui-media-object mui-pull-left" src="../images/1.jpg">
+	            <div class="mui-media-body">
+	                呼市+希拉穆仁大草原+响沙湾双飞4日跟团游<草原美拍 宿舒适酒店>
+	                <p class="mui-ellipsis">7月11日-9月4日多团期</p>
+                    <p class="mui-ellipsis"><cite>￥0</cite>首付<em>0利息</em><em>￥200/3期</em></p>
+	            </div>
+	        </a>
+	    </li>
+	</ul>
+	<!--公共页脚-->
+	<nav class="mui-bar-bs">
+    	<a href="javascript:;" class="active">
+    		<span class="sy"></span>
+    		<span class="tab-label">首页</span>
+    	</a>
+    	<a href="ProductList.html" class="">
+    		<span class="cp"></span>
+    		<span class="tab-label">产品</span>
+    	</a>
+    	<a href="private.html" class="">
+    		<span class="wd"></span>
+    		<span class="tab-label">我的</span>
+    	</a>
+    </nav>
+<!--mui自带类库-->
+<script src="../js/mui.min.js"></script>
+<!--jquery类库-->
+<script src="../js/jquery-1.9.1.min.js"></script>
+<!--公共方法类库-->
+<script src="../js/common.js"></script>
+<script type="text/javascript">
+	$(function(){
+		
+		//获取基础数据列表;
+		httpAjax("GET", "prod/hot", null, aSuccessFunc, aErrorFunc, aTimeOut);
+		
+		//请求成功函数;
+		function aSuccessFunc(data){
+			
+			if(data.state == "S"){
+				//console.log( data.data.prodList );
+				//幻灯片返回数据;
+				$(".mui-slider-group").html("");
+				$(".mui-slider-indicator").html("");
+				var picHtml = "";
+				var navBar = "";
+				picHtml += '<div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="'+ data.data.bannerList[data.data.bannerList.length-1].url +'"></a></div>';
+				for(var i=0;i<data.data.bannerList.length;i++){
+					picHtml += '<div class="mui-slider-item"><a href="#"><img src="'+ data.data.bannerList[i].url +'"></a></div>';
+					navBar += '<div class="mui-indicator"></div>';
+				}
+				picHtml += '<div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="'+ data.data.bannerList[0].url +'"></a></div>';
+				$(".mui-slider-indicator").append( navBar );
+				$(".mui-slider-group").append( picHtml );
+				$(".mui-slider-indicator").find("div").eq(0).addClass("mui-active");
+				
+				//获得slider插件对象--轮播图
+				var slider = mui("#slider");
+				slider.slider({
+					interval: 3000
+				});
+				
+				//产品列表返回数据;
+				$("#proList").html("");
+				var oHtml = '';
+				for(var i=0;i<data.data.prodList.length;i++){
+					//零首付
+					if(data.data.prodList[i].payScale == '0'){
+						shoufu = '<em>0首付</em>';
+					}else if(data.data.prodList[i].payScale == null || data.data.prodList[i].payScale == ''){
+						shoufu = '';
+					}else{
+						shoufu = '<em>'+data.data.prodList[i].payScale+'%首付</em>';
+					}
+					//零利息
+					if(data.data.prodList[i].fundRate == '0'){
+						lixi = '<em>0利率</em>';
+					}else if(data.data.prodList[i].fundRate == null || data.data.prodList[i].fundRate == ''){
+						lixi = '';
+					}else{
+						lixi = '';
+					}
+					//零手续费
+					if(data.data.prodList[i].procedureRate == '0'){
+						shouxu = '<em>0手续费</em>';
+					}else if(data.data.prodList[i].procedureRate == null || data.data.prodList[i].procedureRate == ''){
+						shouxu = '';
+					}else{
+						shouxu = '';
+					}
+					
+					if( typeof(data.data.prodList[i].shelvesUpTime) == "undefined" ){
+						data.data.prodList[i].shelveUpTime = '';
+					}
+					
+					//超过两行（32个中文字)截取console.log( String( productList[i].prodTitle.length ) );
+					if( data.data.prodList[i].prodTitle.length > 32 ){
+						data.data.prodList[i].prodTitle = data.data.prodList[i].prodTitle.substring(0,28) + "...";
+					}
+					
+					oHtml+='<li class="mui-table-view-cell mui-media" id='+ data.data.prodList[i].id +'><a href="javascript:;"><img class="mui-media-object mui-pull-left" src="'+ data.data.prodList[i].thumbImg +'"><div class="mui-media-body"><span class="hl_product_title">'+ data.data.prodList[i].prodTitle +'</span><p class="mui-ellipsis"><i class="shelveUpTime">'+ data.data.prodList[i].remarks +'</i></p><p class="mui-ellipsis"><cite>￥<span class="f12">'+ FormatMoney(data.data.prodList[i].frontShowPrice,2) +'</span></cite>'+ shoufu + lixi + shouxu +'</p><p class="mui-ellipsis hl_yellow"><i class="">'+ data.data.prodList[i].stageNum +'</i>期 | ￥<i class="">'+ FormatMoney(data.data.prodList[i].paymentMoney,2) +'</i>/期</p></div></a></li>'
+
+					//获取利息及首付,手续费元素，根据返回状态判断其显示隐藏
+					/* $("#proList .noRate").each(function(index, element) {
+						if( parseInt($(this).text()) == 0){
+							$(this).show();
+							$(this).html("0利息");
+						}else{
+							$(this).hide();
+						}
+	                });
+					$("#proList .noPay").each(function(index, element) {
+	                    if( parseInt($(this).text()) > 1){
+							$(this).show();	
+							$(this).html(data.data.prodList[i].payScale+"%首付");
+						}else{
+							$(this).show();	
+							$(this).html("0首付");
+						}
+	                });
+					$("#proList .noCost").each(function(index, element) {
+	                    if( parseInt($(this).text()) > 1){
+							$(this).hide();
+						}else{
+							$(this).show();	
+							$(this).html("0手续费");
+						}
+	                }); */
+				}
+				$("#proList").append( oHtml );
+			}
+			//查询失败状态;
+			if(data.state == "F"){
+				console.log(data.msg);
+			}
+		}
+		//请求失败函数;
+		function aErrorFunc(data){
+			
+		}
+		//点击产品列表项;
+		$(document).on("touchend", "li", function (e) {
+			if (isClick) {
+				if( this.id !== ""){
+					gotopage($(this).attr("id"));
+				}
+			}
+		});
+		//跳转页面;
+		var index = null;
+		function gotopage(id) {
+			window.location = "ProductDetail.html?id=" + id +"&goback=" + index;
+		}
+		
+		//点击公告提示;
+		$(document).on("touchend", ".Notice", function(){
+			if(isClick){
+				mui.alert(popupTIPS.tips1, '提示');
+				//return;
+			}
+		});
+		//点击邀请提示;
+		$(document).on("touchend", ".Invitation", function(){
+			if(isClick){
+				mui.alert(popupTIPS.tips1, '提示');
+				//return;
+			}
+		});
+	});
+	//拨打电话调用函数;
+	function callMobile(){
+        //if(isWeiXin()){
+            /*window.location.href = "index.html#mp.weixin.qq.com";*/
+			$("#phoneBtn").attr("href", "tel:" + telNumber);
+        //}
+    }
+	
+</script>
+</body>
+</html>

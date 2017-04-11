@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>产品页</title>
+  	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="Expires" content="-1">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Pragma" content="no-cache">
+	<!--标准mui.css-->
+    <link rel="stylesheet" href="../css/mui.min.css">
+    <style>
+        .title{
+            margin: 20px 15px 7px;
+            color: #6d6d72;
+            font-size: 15px;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+</head>
+<body style="background: #f2f2f2;">
+<!--头部-->
+    <header class="mui-bar mui-bar-nav mui_nav_bg">
+        <!--<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" id="goBack"></a>-->
+        <h1 class="mui-title">产品</h1>
+    </header>
+	<div class="mui-content"></div>
+    <!--公共页脚-->
+	<nav class="mui-bar-bs">
+    	<a href="index.html#mp.weixin.qq.com" class="">
+    		<span class="sy"></span>
+    		<span class="tab-label">首页</span>
+    	</a>
+    	<a href="javascript:;" class="active">
+    		<span class="cp"></span>
+    		<span class="tab-label">产品</span>
+    	</a>
+    	<a href="private.html" class="">
+    		<span class="wd"></span>
+    		<span class="tab-label">我的</span>
+    	</a>
+    </nav>
+<!-- muiJS -->	
+<script src="../js/mui.min.js"></script>
+<script src="../js/mui.pullToRefresh.js"></script>
+<script src="../js/mui.pullToRefresh.material.js"></script>
+<!-- 常用JS -->
+<script src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/common.js"></script>
+<script type="text/javascript">
+		//启用双击监听
+		mui.init({
+			gestureConfig:{
+				doubletap:true
+			},
+			subpages:[{
+				url:'productListSub.html',
+				id:'productListSub.html',
+				styles:{
+					top: '45px',
+					bottom: '0px',
+				}
+			}]
+		});
+		
+		var contentWebview = null;
+		document.querySelector('header').addEventListener('doubletap',function () {
+			if(contentWebview==null){
+				contentWebview = plus.webview.currentWebview().children()[0];
+			}
+			contentWebview.evalJS("mui('#pullrefresh').pullRefresh().scrollTo(0,0,100)");
+		});
+		
+		var knowChannel = "";
+		//knowChannel初始化
+		function onSetKnowChannel(nativeKnowChannel){
+		  knowChannel = nativeKnowChannel;
+		}
+		
+		function goback(){
+			try{
+		        if(knowChannel.indexOf("IOS")>=0) {
+		                javatojs.JSWithTypeAndJsonString("3","");
+		        } else if(knowChannel.indexOf("ADR")>=0) {
+		                javatojs.JSWithTypeAndJsonString("3","");
+		        } else {
+		        	    javatojs.JSWithTypeAndJsonString("3","");
+		        }
+			} catch(e) {
+				console.log("Failed to invoke native method.");
+			}
+		}
+		
+</script>
+</body>
+</html>

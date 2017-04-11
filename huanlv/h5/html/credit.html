@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>信用</title>
+  	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+	  <!--标准mui.css-->
+    <link rel="stylesheet" href="../css/mui.min.css">
+    <!--App自定义的css-->
+    <!--<link rel="stylesheet" type="text/css" href="../css/app.css">-->
+
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="../css/hl_style.css">
+    <link rel="stylesheet" type="text/css" href="../css/credit.css">
+</head>
+
+
+<body style="background: ;">
+	<!--头部-->
+    <header class="mui-bar mui-bar-nav hl_headerSty">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">信用</h1>
+
+    </header>
+
+    <!--银行列表-->
+<article>
+  <div class="quota">
+    征信额度<span>0</span>
+    <p>请完善基础资料和个人信用以提升额度</p>
+  </div>
+</article>
+
+
+
+<ul class="mui-table-view">
+  <li class="mui-table-view-cell">
+    <a class="mui-navigate-right"><img src="../images/hl_icon.png" alt="" class="icon-size">基础资料<span>(审核中/未通过/未认证)</span></a>
+  </li>
+  <li class="mui-table-view-cell">
+    <a class="mui-navigate-right"><img src="../images/hl_icon1.png" alt="" class="icon-size">个人信用</a>
+  </li>
+  <li class="mui-table-view-cell">
+    <a class="mui-navigate-right"><img src="../images/hl_icon2.png" alt="" class="icon-size">修改安全码</a>
+  </li>
+  <li class="mui-table-view-cell">
+    <a class="mui-navigate-right"><img src="../images/hl_icon3.png" alt="" class="icon-size">资料补件</a>
+  </li>
+
+</ul>
+
+<div class="tel">客服电话&nbsp;<span>400-000-0000</span></div>
+
+
+
+<script src="../js/mui.min.js"></script>
+<script>
+    !function (N, M) {  /*动态设置DPR*/
+      function L() {
+        var a = I.getBoundingClientRect().width;
+        a / F > 540 && (a = 540 * F);
+        var d = a / 10;
+        I.style.fontSize = d + "px", D.rem = N.rem = d
+      }
+
+      var K, J = N.document, I = J.documentElement, H = J.querySelector('meta[name="viewport"]'), G = J.querySelector('meta[name="flexible"]'), F = 0, E = 0, D = M.flexible || (M.flexible = {});
+      if (H) {
+        console.warn("将根据已有的meta标签来设置缩放比例");
+        var C = H.getAttribute("content").match(/initial\-scale=([\d\.]+)/);
+        C && (E = parseFloat(C[1]), F = parseInt(1 / E))
+      } else {
+        if (G) {
+          var B = G.getAttribute("content");
+          if (B) {
+            var A = B.match(/initial\-dpr=([\d\.]+)/), z = B.match(/maximum\-dpr=([\d\.]+)/);
+            A && (F = parseFloat(A[1]), E = parseFloat((1 / F).toFixed(2))), z && (F = parseFloat(z[1]), E = parseFloat((1 / F).toFixed(2)))
+          }
+        }
+      }
+      if (!F && !E) {
+        var y = N.navigator.userAgent, x = (!!y.match(/android/gi), !!y.match(/iphone/gi)), w = x && !!y.match(/OS 9_3/), v = N.devicePixelRatio;
+        F = x && !w ? v >= 3 && (!F || F >= 3) ? 3 : v >= 2 && (!F || F >= 2) ? 2 : 1 : 1, E = 1 / F
+      }
+      if (I.setAttribute("data-dpr", F), !H) {
+        if (H = J.createElement("meta"), H.setAttribute("name", "viewport"), H.setAttribute("content", "initial-scale=" + E + ", maximum-scale=" + E + ", minimum-scale=" + E + ", user-scalable=no"), I.firstElementChild) {
+          I.firstElementChild.appendChild(H)
+        } else {
+          var u = J.createElement("div");
+          u.appendChild(H), J.write(u.innerHTML)
+        }
+      }
+      N.addEventListener("resize", function () {
+        clearTimeout(K), K = setTimeout(L, 300)
+      }, !1), N.addEventListener("pageshow", function (b) {
+        b.persisted && (clearTimeout(K), K = setTimeout(L, 300))
+      }, !1), "complete" === J.readyState ? J.body.style.fontSize = 12 * F + "px" : J.addEventListener("DOMContentLoaded", function () {
+        J.body.style.fontSize = 12 * F + "px"
+      }, !1), L(), D.dpr = N.dpr = F, D.refreshRem = L, D.rem2px = function (d) {
+        var c = parseFloat(d) * this.rem;
+        return "string" == typeof d && d.match(/rem$/) && (c += "px"), c
+      }, D.px2rem = function (d) {
+        var c = parseFloat(d) / this.rem;
+        return "string" == typeof d && d.match(/px$/) && (c += "rem"), c
+      }
+    }(window, window.lib || (window.lib = {}));
+  </script>
+  <script src="../js/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
+  <script>
+    $('#goBack').bind('click', function () {
+      window.javatojs.JSWithTypeAndJsonString("2", {});
+    });
+  </script>
+
+
+</body>
+</html>

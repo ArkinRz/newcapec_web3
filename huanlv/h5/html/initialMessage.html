@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta http-equiv="Expires" content="-1">
+        <meta http-equiv="Cache-Control" content="no-cache">
+        <meta http-equiv="Pragma" content="no-cache">
+        <title>基础资料</title>
+        <!--标准mui.css-->
+        <link rel="stylesheet" href="../css/mui.min.css">
+        <link rel="stylesheet" href="../css/hl_style.css">
+        <!-- APP自用CSS -->
+        <link rel="stylesheet" href="../css/initialMessage.css">
+    </head>
+    <body>
+        <header class="mui-bar mui-bar-nav hl_headerSty">
+           <a class="mui-icon mui-icon-left-nav mui-pull-left" href="privateCreLight.html"></a>
+           <h1 class="mui-title">基础资料</h1>
+        </header>
+        <div class="frontal-box" style="margin-left: 1.7625%;">
+            <a href="javascript:;" id="take-photos_1">
+                <div id="img-box_1">
+                    <img src="../images/hl_idCardUp.png" id="images_1" class="img-bg">
+                    <input accept="image/*" type="file" id="file_1" class="imgFile" capture="camera" name="image" onfocus="this.blur()">
+                    <!--<input type="button" id="file_1" onfocus="this.blur()"/>-->
+                </div>
+                <p>点击选身份证正面(人像面)</p>
+            </a>
+        </div>
+        <div class="frontal-box frontal_comon">
+            <a href="javascript:;" id="take-photos_2">
+                <div id="img-box_2">
+                    <img src="../images/hl_idCardDown.png" id="images_2" class="img-bg">
+                    <input accept="image/*" type="file" id="file_2" class="imgFile" capture="camera" name="image" onfocus="this.blur()">
+                    <!--<input type="button" id="file_2" onfocus="this.blur()"/>-->
+                </div>
+                <p>点击选身份证背面(国徽面)</p>
+            </a>
+        </div>
+        <!--增加手持身份证-->
+        <div class="frontal-box frontal_comon" style="margin-left: 1.7625%;">
+            <a href="javascript:;" id="take-photos_3">
+                <div id="img-box_3">
+                    <img src="../images/hl_handFront.png" id="images_3" class="img-bg">
+                    <input accept="image/*" type="file" id="file_3" class="imgFile" capture="camera" name="image" onfocus="this.blur()">
+                    <!--<input type="button" id="file_3" onfocus="this.blur()"/>-->
+                </div>
+                <p>点击选择手持身份证正面照</p>
+            </a>
+        </div>
+        <div class="frontal-box frontal_comon">
+            <a href="javascript:;" id="take-photos">
+                <div id="img-box">
+                    <img src="../images/hl_frontal_view.png" id="images" class="img-bg">
+                    <!--<input type="file" accept="image/*" id="file" class="imgFile" capture="camera" name="image_best" onfocus="this.blur()">-->
+                    <input type="button" id="file" onfocus="this.blur()"/>
+                </div>
+                <p>点击拍摄本人正面照</p>
+            </a>
+        </div>
+        <div class="button-box" id="buttons">
+        	<a href="javascript:void(0)" class="mui-btn mui-btn-outlined" style="border:none;" onclick="checkMessage()">识别</a> <!--basdata.html-->
+            <a class="mui-btn mui-btn-outlined" style="border:none;" onclick="callMobile()" id="phoneBtn">联系客服</a>
+        </div>
+        <!--图片解析弹窗-->
+        <!--图片解析弹窗-->
+        <div id="tipsBox">
+            <div>
+                <img src="../images/loading_big.gif"/>
+                <p id="tipsText">识别中,请稍后!</p>
+            </div>
+        </div>
+        <script src="../js/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../js/common.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../js/plupload.full.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../js/md5-min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+			//==================读取本地缓存;判断是否登录;
+			gotologin('flag');//传入参数 表示登录后页面不跳转直接进入'我的'
+			
+            var fileObjId= ['file'];
+            var imgBoxId = ['img-box'];
+            var imgObj = [$('#images')[0]];
+            var imgBox = [$('#img-box')[0]];
+            //绑定事件
+            var nowIndex = 0;//储存当前点击的input[file]
+            $('.frontal-box').bind('click',function(){
+                nowIndex = $(this).index()-1;
+                console.log(nowIndex);
+            });
+            var preImg = null;
+            function getCameraImg(fileObj,imgObj,imgBox){//文件对象file 图片对象  图片box
+                fileObj.obj = fileObj.onchange;
+                fileObj.onchange=function(){
+                   read(fileObj,imgObj,imgBox);
+                   fileObj.obj.call(fileObj);
+                }    
+            }
+            function read(fileObj,imgObj,imgBox){
+                var fs=fileObj.files[0];
+                if(preImg == fs) return;
+                if(fs){
+                    preImg = fs;
+                    var reader=new FileReader();
+                    reader.readAsDataURL(fs);
+                    reader.onload=function(e){
+                        imgObj.onload = function(){
+                            var scale = this.width/this.height;
+                            var imgH = imgBox.offsetHeight;
+                            var imgW = imgH*scale;
+                            this.style.width = imgW + 'px';
+                            this.style.height = imgH + 'px';
+                        }
+                        imgObj.src=this.result; 
+                        imgObj.style.width = 'auto';
+                    }
+                }
+            }
+            function fileSubmit(url,camerBtnId,quality,slefContainerId,imgObj,imgBox,fileName,params,callback){//
+                var uploader = new plupload.Uploader({
+                    runtimes : 'html5',//'html5,flash,silverlight,html4'
+                    browse_button : camerBtnId, // you can pass in id...
+                    container: document.getElementById(slefContainerId), // ... or DOM Element itself
+                    url : CONST_SERVER_DOMAIN + url,//http://192.168.0.200:8085/site-admin-v1.5/site/face/toOCR   
+                    filters : {
+                        mime_types: [
+                            {title : "Image files", extensions : "jpg,png"},
+                        ]
+                    },
+                    file_data_name: fileName,
+                    resize: {
+                      //width: 900,
+                      quality: quality,
+                      preserve_headers: false
+                    },
+                    max_retries: 1,
+                    multipart_params: params,
+                    init: {
+                        PostInit: function() {
+                            getCameraImg($('.moxie-shim input')[0],imgObj[0],imgBox[0]);
+                        },
+                        QueueChanged: function(){
+                            fileObjArray.splice(3,1,uploader);//存储 uploader对象
+                            //fileObjArray[2].start();//上传身份证正面照片
+                            return false;
+                        },
+                        FileUploaded: function(up,file,responseObject){
+                            callback&&callback(responseObject);//回调
+                        },
+                        Error: function(up,err){
+                            //console.log(up,err);
+                            imgObj[0].src = '../images/hl_frontal_view.png'; 
+                            imgObj[0].style.width = 'auto';
+                            $("#" + imgBoxId[0] + " div").remove();
+                            var quality = qualityChange(fileObjArray[3]);//获取图片质量
+                            fileSubmit('face/detect',fileObjId[0],quality,imgBoxId[0],imgObj,imgBox,'image_best', sendParam_1, callBack_3); 
+                            $('#tipsBox').css({'display': 'none'});
+                            fileObjArray.splice(3,1,null);//存储 uploader对象 将之前的图片上传对象设为null
+                            isFirstClick = true;//清除第一次点击状态
+                            mui.alert(popupTIPS.tips25);
+                        }
+                    }
+                });
+                uploader.init();
+            }
+            //文件上传部分
+            var api_key = "-htSTbM3vcT1LNwyB2ksi7hizEK1ZHZw";
+            var api_secret = "yvV8OUJ7wDp9iComvfmwrjPHpT4ZrS7M";
+            //var userid = '001400015';//getLocal("userId");//读取userId
+            var userid = getLocal("userId")|| getCookie( "userId");//读取userId'001400015';//
+            var params = {//前两个图片参数
+                  userid: userid,
+                  api_key: api_key,
+                  api_secret: api_secret,
+            };
+            //前两张图片参数MD5加密
+            var sendParam = {},sendParam_1 = {};
+            for(var i in params){
+                sendParam[i]= params[i];
+            }
+            //console.log(md5seri(sendParam));
+            sendParam['md5Sign'] = hex_md5(md5seri(sendParam)).toUpperCase();//MD5加密
+            
+            var sendParam_3 = {//手持身份证图片参数 第三张图片参数
+                userId: userid
+            }
+            var fileObjArray = new Array(4);
+            var fileKeyName = ['image','image','hangImg'];
+            var data = null;
+            $('.imgFile').bind('change', function (e){
+                var file = e.target.files[0];
+                var _this = this;
+                if (file && /^image\//i.test(file.type)){ 
+                    var reader = new FileReader();          
+                    reader.onloadend = function () {
+                        // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
+                        var dataURL = reader.result;
+                        var img = new Image();
+                        img.onload = function(){
+                            var canvasDataURL = dataURL;
+                            // 当图片大于2M时, 就宽度压缩成 900px, 高度按比例计算
+                            // 压缩质量可以根据实际情况调整
+                            if(file.size >= 2*1024*1024){
+                                var w = Math.min(900, img.width);
+                                var h = img.height * (w / img.width);
+                                var canvas = document.createElement('canvas');
+                                var ctx = canvas.getContext('2d');                      
+                                // 设置 canvas 的宽度和高度
+                                canvas.width = w;
+                                canvas.height = h;              
+                                // 把图片绘制到 canvas 中
+                                ctx.drawImage(img, 0, 0, w, h);                     
+                                // 取出 base64 格式数据
+                                canvasDataURL = canvas.toDataURL('image/jpeg',1); 
+                            }
+                            var fileName = fileKeyName[nowIndex];
+                            data = dataURIToOBJ(fileName,canvasDataURL);
+                            fileObjArray.splice(nowIndex,1,data);
+                            // 插入到 DOM 中预览
+                            $('.img-bg').eq(nowIndex).attr("src", canvasDataURL);
+                            $('.img-bg').eq(nowIndex).css({opacity: 1});
+                            //console.log(data);
+                            //window.location = canvasDataURL;
+                            //前两张图片压缩后就上传
+                            if(nowIndex == 0){//身份证正面
+                                sendImgToServer('face/toOCR',fileObjArray[0],sendParam,callBack_1);
+                            }else if(nowIndex == 1){//身份证反面
+                                sendImgToServer('face/toOCR',fileObjArray[1],sendParam,callBack_2);
+                            }else if(nowIndex == 2){//本人手持身份证照片
+                                sendImgToServer('face/saveHand',fileObjArray[2],sendParam_3,callBack_3);
+                            }
+                        }
+                        $('#tipsBox').css({'display': 'block'});
+                        $('#tipsText').html(popupTIPS.tips21);
+                        img.src = dataURL;
+                    };          
+                    // 读出base64格式
+                    reader.readAsDataURL(file);
+                }
+            });
+            //直接读取canvas数据
+            function canvasToData(canvasObj,fileName){                     
+                // 取出 base64 格式数据
+                var canvasDataURL = canvasObj.toDataURL('image/jpeg',0.9); 
+                var data = dataURIToOBJ(fileName,canvasDataURL);
+                return data;
+            }
+            function dataURIToOBJ(fileName,dataURI){//URL数据转存处理
+                var dataString = dataURI.split(',')[1];
+                var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                var obj = {};
+                obj.name = fileName + (mimeString == 'image/jpeg'?'.jpg':'.png');
+                obj.type = mimeString;
+                obj.data = encodeURIComponent(dataString);//安全起见 编码
+                return {'keyName': fileName, 'data': obj};
+            }
+            function sendImgToServer(url,fileDataArray,parameterObj,callBack){//发送图片到服务器
+                var fd = new FormData();
+                var param = {};
+                for(var i in parameterObj){
+                    fd.append(i, parameterObj[i]);
+                }
+                fd.append(fileDataArray['keyName'], JSON.stringify(fileDataArray['data']));
+                $.ajax({
+                    type: 'POST',
+                    url: CONST_SERVER_DOMAIN + url,
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    xhr: function() {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener("progress", function(evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = evt.loaded / evt.total;
+                                //console.log('进度', percentComplete);
+                            }
+                        }, false);
+                        return xhr;
+                    }
+                }).success(function (res) {
+                    callBack&&callBack(res);
+                }).error(function (err) {
+                    $('#tipsBox').css({'display': 'none'});
+                    //console.error(err);
+                });
+            }
+            var isFirstClick = true;//防止多次点击
+            var isIDCardfront = false,isIDCardBack = false,isHandIDCardFront = false;//身份证正面照,身份证反面照,手持身份证正面照
+            function checkMessage(){
+                if(!isFirstClick) return;
+                if(!isIDCardfront){
+                    mui.alert('请选择身份证正面照片!');
+                    return;
+                }
+                if(!isIDCardBack){
+                    mui.alert('请选择身份证反面照片!');
+                    return;
+                }
+                if(!isHandIDCardFront){
+                    mui.alert('请选择本人手持身份证正面照片!');
+                    return;
+                }
+                for(var i=0; i<fileObjArray.length; i++){
+                    if(fileObjArray[i] === undefined||fileObjArray[i] === null){
+                        mui.alert(popupTIPS.tips22);
+                        return;
+                    }
+                }
+                isFirstClick = false;
+                $('#tipsBox').css({'display': 'block'});
+                $('#tipsText').html(popupTIPS.tips21);
+                //第三张图片上传
+                fileObjArray[3].start();//上传正面照
+            }
+            function callBack_1(responseObject){//身份证正面上传后返回的数据
+                var obj = JSON.parse(responseObject);
+                //console.log(obj);
+                if(obj['state'] == 'S'){//成功,页面跳转
+                    if(!obj.data.name&&!obj.data.address&&!obj.data.birthday&&!obj.data.gender&&!obj.data.id_card_number&&!obj.data.race){
+                        $('.img-bg').eq(0).attr("src", '../images/hl_idCardUp.png');
+                        $('.img-bg').eq(0).css({width : 'auto'});
+                        $('#tipsBox').css({'display': 'none'});
+                        fileObjArray.splice(0,1,null);//存储 uploader对象 将之前的图片上传对象设为null
+                        mui.alert(popupTIPS.tips23);
+                        isFirstClick = true;//清除第一次点击状态
+                        return;
+                    }
+                    $('#tipsBox').css({'display': 'none'});
+                    isIDCardfront = true;//身份证正面照上传成功
+                    if(isSessionStorageSupported()){
+                        setLocal('userName', obj.data.name);
+                        setLocal('IDCard', obj.data.id_card_number);
+                    }else{
+                        setCookie('userName', obj.data.name, 1);
+                        setCookie('IDCard', obj.data.id_card_number, 1);
+                    }
+                    setCookie('address', obj.data.address, 1);
+                    setCookie('birthday', obj.data.birthday.year + '-' + obj.data.birthday.month + '-' + obj.data.birthday.day, 1);
+                    setCookie('gender', obj.data.gender, 1);
+                    setCookie('race', obj.data.race, 1);
+                    /***************第三张图片参数***************/
+                    var parameterObj = {//第三张图片参数
+                        userid: userid,//"001400015",
+                        api_key: api_key,
+                        api_secret: api_secret,
+                        name: getLocal("userName")|| getCookie( "userName"),//getcache('name'),
+                        idcard: getLocal("IDCard")|| getCookie( "IDCard")//getcache('id_card_number'),
+                    };
+                    //最后一张图片参数MD5加密 
+                    sendParam_1 = {};
+                    for(var i in parameterObj){
+                        sendParam_1[i]= parameterObj[i];
+                    }
+                    sendParam_1['md5Sign'] = hex_md5(md5seri(sendParam_1)).toUpperCase();//MD5加密
+                    parameterObj = {//第三张图片参数
+                        userid: userid,//"001400015",
+                        api_key: api_key,
+                        api_secret: api_secret,
+                        name: getLocal("userName")|| getCookie( "userName"),//getcache('name'),
+                        idcard: getLocal("IDCard")|| getCookie( "IDCard"),//getcache('id_card_number'),
+                        sign: 'webApp'
+                    };
+                    var sendParam_2 = {};
+                    for(var i in parameterObj){
+                        sendParam_2[i]= parameterObj[i];
+                    }
+                    sendParam_1['md5Sign2'] = hex_md5(md5seri(sendParam_2)).toUpperCase();//MD5加密
+                    sendParam_1['sign'] = 'webApp';
+                    //只有当前三张图片选择后才可上传第四张
+                    fileSubmit('face/detect',fileObjId[0],90,imgBoxId[0],imgObj,imgBox,'image_best', sendParam_1, callBack_4);
+                }else if(obj['state'] == 'F'){//失败
+                    $('#tipsBox').css({'display': 'none'});
+                    mui.alert(obj['msg'],'提示');
+                }
+            }
+            function callBack_2(responseObject){//第二个图片上传完成执行
+                var obj = JSON.parse(responseObject);
+                if(obj["state"] == "S"){
+                    if(!obj.data.valid_date){//检测上传图片是否正确
+                        $('.img-bg').eq(1).attr("src", '../images/hl_idCardDown.png');
+                        $('.img-bg').eq(1).css({width : 'auto'});
+                        $('#tipsBox').css({'display': 'none'});
+                        fileObjArray.splice(1,1,null);//存储 uploader对象 将之前的图片上传对象设为null
+                        mui.alert(popupTIPS.tips24);
+                        isFirstClick = true;//清除第一次点击状态
+                        return;
+                    } 
+                    $('#tipsBox').css({'display': 'none'});
+                    isIDCardBack = true;//身份证反面照上传成功
+                    setCookie('valid_date', obj.data.valid_date, 1);
+                }else if(obj["state"] == "F"){
+                    $('#tipsBox').css({'display': 'none'});
+                    mui.alert(obj['msg']);
+                }
+            }
+            function callBack_3(responseObject){//第三个图片上传完成执行
+                var obj = JSON.parse(responseObject);
+                if(obj["state"] == "S"){
+                    $('#tipsBox').css({'display': 'none'});
+                    isHandIDCardFront = true;//手持身份证正面照上传成功
+                }else if(obj["state"] == "F"){
+                    isFirstClick = true;//清除第一次点击状态
+                    $('#tipsBox').css({'display': 'none'});
+                    mui.alert(obj['msg']);
+                }
+            }
+            function callBack_4(responseObject){
+                var obj = JSON.parse(responseObject.response);
+                if(obj["state"] == "S"){
+                    $('#tipsBox').css({'display': 'none'});
+                    window.location = 'basdata.html';//页面跳转 到基本信息页面
+                }else if(obj["state"] == "F"){
+                    $('#tipsBox').css({'display': 'none'});
+                    mui.alert(obj['msg']);
+                    if(obj['msg'] == '该身份证已注册'){
+                        $('.img-bg').eq(0).attr("src", '../images/hl_idCardUp.png');
+                        $('.img-bg').eq(0).css({width : 'auto'});
+                        $('.img-bg').eq(1).attr("src", '../images/hl_idCardDown.png');
+                        $('.img-bg').eq(1).css({width : 'auto'});
+                        $('.img-bg').eq(2).attr("src", '../images/hl_handFront.png');
+                        $('.img-bg').eq(2).css({width : 'auto'});
+                        imgObj[0].src = '../images/hl_frontal_view.png'; 
+                        imgObj[0].style.width = 'auto';
+                        for(var i=0; i<fileObjArray.length; i++){
+                            fileObjArray.splice(i,1,null);//存储 uploader对象 将之前的图片上传对象设为null
+                        }
+                        isFirstClick = true;//清除第一次点击状态
+                    }else{
+                        imgObj[0].src = '../images/hl_frontal_view.png'; 
+                        imgObj[0].style.width = 'auto';
+                        fileObjArray.splice(3,1,null);//存储 uploader对象 将之前的图片上传对象设为null
+                        isFirstClick = true;//清除第一次点击状态
+                    }
+                }
+            }
+            //图片压缩率根据文件大小动态改变
+            function qualityChange(obj){
+                var quality = 70;
+                if(obj.files[0].origSize >= 5*1024*1024){
+                    quality = 40;
+                }else if(obj.files[0].origSize < 5*1024*1024 && obj.files[0].origSize >= 4*1024*1024){
+                    quality = 50;
+                }else if(obj.files[0].origSize < 4*1024*1024 && obj.files[0].origSize >= 3*1024*1024){
+                    quality = 70;
+                }else if(obj.files[0].origSize < 3*1024*1024 && obj.files[0].origSize >= 2*1024*1024){
+                    quality = 80;
+                }
+                return quality;
+            }
+            $('#tipsBox').bind('touchmove',function(){
+                return false;
+            });
+        </script>
+        <script>
+		    //拨打电话
+		    function callMobile(){
+		        //if(isWeiXin()){
+                    /*window.location.href = "initialMessage.html#mp.weixin.qq.com";*/
+					$("#phoneBtn").attr("href", "tel:" + telNumber);
+              //}
+          	}
+			
+		    //执行顺序判断 需先传身份证正面照
+		    $('#file').click(function(){
+//		       if(!fileObjArray[0]){
+//		           mui.alert(popupTIPS.tips27,'提示');
+//		           return false;
+//		       }else if(!fileObjArray[1]){
+//                 mui.alert(popupTIPS.tips28,'提示');
+//                 return false;
+//             }
+                for(var i=0; i<fileObjArray.length-1; i++){
+                    if(!isIDCardfront&&(fileObjArray[i] === undefined||fileObjArray[i] === null)){
+                        mui.alert('请首先补全前三张照片!','提示');
+                        return;
+                    }
+                }
+		    });
+//		    $('#file_2').click(function(){
+//		        if(!fileObjArray[0]){
+//                 mui.alert(popupTIPS.tips27,'提示');
+//                 return false;
+//              }
+//		    });
+		</script>
+    </body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>账单</title>
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+<!-- APP自用CSS -->
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/hl_style.css">
+</head>
+<body style="background: #f2f2f2;">
+<header class="mui-bar mui-bar-nav hl_headerSty">
+   <a class="mui-icon mui-icon-left-nav mui-pull-left" href="javascript:;" id="goBackBtn"></a>
+   <h1 class="mui-title">账单</h1>
+</header>
+<!-- 占位 -->
+<section class="hl_bespeakTips10"></section>
+<article style="margin-top: 50px;" id="banklist" class="banklist">
+    <div class="hl_check_title">
+        <div class="hl_check_one">
+            <p class="hl_black33 f10">总计欠款： </p>
+        </div>
+        <div class="hl_check_two">
+            <p class="hl_orange f10" id="totalArrears"></p> 
+            <!--<p class="hl_orange f10" id="id="preArrears"">￥1888.00</p>-->
+        </div>
+        <!--<div class="hl_check_there">-->
+            <!--<p class="hl_gray22 f7">为列表中总额之和</p>-->
+        <!--</div>-->
+    </div>
+    <div class="mui-card">
+        <ul class="mui-table-view hl_check_bottom">
+        </ul>
+    </div>
+</article>
+<!-- 没有帐单时候的提示 -->
+<div id="hl_dataNull" class="orderNull ma-0 mt50" align="center" style="display: none; margin-top: 150px; margin-bottom: 104px;">
+    <img alt="" class="orderNo" src="../images/orderNo.png">
+    <p class="mg-3"></p>
+    <p class="hl_dataNull_font">无帐单记录</p>
+</div>
+<!--mui自带类库-->
+<script src="../js/mui.min.js"></script>
+<!--jquery类库-->
+<script src="../js/jquery-1.9.1.min.js"></script>
+<!--MD5加密类库-->
+<script src="../js/md5-min.js"></script>
+<!--公共方法类库-->
+<script src="../js/common.js"></script>
+
+<script>
+	$(function(){
+		
+		
+		//==================读取本地缓存;判断是否登录;
+		gotologin();
+		
+		//==================从缓存中获取userId; 
+		var userId;
+		//判断用户登录状态,如果是已登录,读取
+		if( getLoginStatus() ){
+			//获取用户userId;
+			userId = getLocal("userId") || getCookie( "userId");
+		}
+		//alert( userId );
+		//请求参数;
+		var param = {};
+		param["apiVersion"] = apiVersion;
+		param["devName"] = devName;
+		param["userId"] = userId;
+		param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+		var aRequestData = param;
+		
+		//发送请求,
+		httpAjax("GET", "order/tradeBillList", aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);
+		
+		//请求成功返回函数
+		function aSuccessFunc(data){
+			
+			if( data.state == "S"){
+				//console.log(data.data.resultList.length);
+				if( data.data.resultList.length < 1){
+					$("#hl_dataNull").css("display","block");
+					$("#banklist").css("display","none");
+				}else{
+					$("#hl_dataNull").css("display","none");
+					$("#banklist").css("display","block");
+					
+					//alert( data.msg );
+					//总计欠款金额;
+					$("#totalArrears").html( "￥" + FormatMoney(data.data.totalAmt,2) );
+					//$('#preArrears').html( "￥" + data.data.preAmt );
+					//欠款列表;
+					var html = ''; 
+					for( var i in data.data.resultList ){
+						
+						html += '<li class="hl_check_content mui-table-view-cell mui-media" id="'+ data.data.resultList[i].billId+'"><img class="hl-media-object mui-pull-left" src="../images/check_icon.png"><div class="mui-media-body hl_checkDeta_text f10">总额: <span class="hl_orange">￥'+ FormatMoney(data.data.resultList[i].bill_amt,2) +'</span><p class="hl_black33 f9">下期还款日: <span class="">'+ data.data.resultList[i].repay_date +'</span></p></div></li>'
+						
+					}
+					$(".hl_check_bottom").html( html );
+				}
+				//点击一键还款;
+				$(".hl_check_bottom li").find(".repayment").on("touchend",function(){
+					if(isClick){
+						gotoCheck( $(".hl_check_bottom").find("li").eq( $(this).index() ).attr("id") );
+					}
+					return false;
+				})
+				//跳转页面;
+				function gotoCheck(id) {
+					window.location = "checkBefore.html?id=" + id;
+				}
+				
+			}
+		}
+		
+		//请求失败返回函数;
+		function aErrorFunc(data){
+			/*if( data.state == "F"){
+				console.log( );
+			}*/
+		}
+		
+		//点击账单
+		$(document).on("touchend", "li", function (e) {
+			if (isClick) {
+				gotopage($(this).attr("id"));
+			}
+		});
+		//跳转页面
+		function gotopage(id) {
+			window.location = "checkDetails.html?billId=" + id ;
+		}
+		
+		//判断返回跳转的位置;
+		var goBackUrl = getUrlParam('goback');
+		$("#goBackBtn").on("click",function(){	
+			if( goBackUrl == "null" && getLoginStatus() ){
+				window.location.href = "private.html#mp.weixin.qq.com";
+			}else{
+				window.location.href = "index.html#mp.weixin.qq.com";
+			}
+		})
+		
+	})
+	
+	
+</script>
+</body>
+</html>

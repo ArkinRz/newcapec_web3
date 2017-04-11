@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="apple-mobile-web-app-title" content="欢旅金融登录">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>登录</title>
+<!-- APP自用CSS -->
+<link rel="stylesheet" href="../css/main.css">
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+<link rel="stylesheet" href="../css/hl_style.css">
+<style type="text/css">
+	input[type="number"], textarea, button {-webkit-tap-highlight-color:rgba(0,0,0,0);border-radius: 0;}
+	.regLogin .list .get{border-radius: 0;border-top-left-radius: 0;border-top-right-radius: 0;border-bottom-right-radius: 0;border-bottom-left-radius: 0;}
+	::-webkit-input-placeholder { /* WebKit browsers */ color: #e5f6f9; } 
+	:-moz-placeholder { /* Mozilla Firefox 4 to 18 */ color: #e5f6f9; } 
+	::-moz-placeholder { /* Mozilla Firefox 19+ */ color: #e5f6f9; } 
+	:-ms-input-placeholder { /* Internet Explorer 10+ */ color: #e5f6f9; } 
+</style>
+</head>
+<body class="regLog">
+<!--<div id="regHeader">
+    <a class="mui-action-back back"></a>登录
+</div>-->
+<header class="mui-bar no_bg">
+   <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+   <h1 class="mui-title"></h1>
+</header>
+<div class="regLogin">
+	<div class="hl_logo tc"><img src="../images/hl_logo.png" /></div>
+    <form id="loginForm">
+        <div class="list normal">
+        <input type="file" >
+            <label class="phone">
+                <input type="text" id="logPhone" class="checkHasValue" name="logPhone" placeholder="手机号码" maxlength="11"/>
+            </label>
+        </div>
+        <div class="list normal">
+            <label class="imgCode">
+                <input id="logImgCode" class="checkHasValue" name="logImgCode" type="text" placeholder="图片验证码" maxlength="4"/>
+            </label>
+            <a href="javascript:verifyCode();" class="ImgValide"><img id="logImgValide" src=" " alt="图片验证码"/></a>
+        </div>
+        <div class="list normal">
+            <label class="phoneCode">
+                <input id="regPhoneCode" class="checkHasValue" type="text" placeholder="手机验证码" maxlength="6"/>
+            </label>
+            <span class="get" id="regGetMess">获取</span>
+        </div>
+        <div class="hl_input_row" style="margin: 40px 20px 15px 0;">
+            <i class="checkedOn hl_agree"></i><a href='agreementUser.html' class="hl_bankAgree" style="color: white;">同意欢旅金服服务协议</a>
+        </div>
+        <!--<div class="xieyi" style="color: #fff; height: 30px; margin:30px 0 10px 14px; font-size: 13px;"><input type="checkbox" id="protocol">&nbsp;&nbsp;<label style="color: #fff;" for='protocol'>同意欢旅金服服务协议</label></div>-->
+        <div class="hl-collapse-content" style="margin-top: 0;">
+        	<input id="logSubmit" class="submit btn" type="button" value="登录" onClick="commLogin()" style="margin: 0;width: 100%;"/>
+        </div>
+    </form>
+</div>
+<script src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/mui.min.js"></script>
+<script src="../js/md5-min.js"></script>
+<script type="text/javascript">
+var usrMpFlag = false;
+var checkpCodeFlag = false;
+var picNumber = "";
+$("#logPhone").numeral();
+$("#logImgCode").numeral();
+$("#regPhoneCode").numeral();
+/**
+ * 获取图片验证码
+ */
+function verifyCode(){
+	picNumber = randomNum(8);
+	$('#logImgValide').attr("src",CONST_SERVER_DOMAIN+"captcha/"+picNumber);
+}
+/**
+ * 手机号格式验证
+ */
+$('#logPhone').bind('change',function(){
+    checkPhone();
+});
+$('#logImgCode').bind('change',function(){
+    if(!$(this).val()||($(this).val().length < 4)){
+        mui.alert(popupTIPS.tips42, '提示');
+    }
+});
+$('#regPhoneCode').bind('change',function(){
+    if(!$(this).val()||($(this).val().length < 6)){
+        mui.alert(popupTIPS.tips43, '提示');
+    }
+});
+function checkPhone(){
+   var usrMp = $.trim($("#logPhone").val());
+   $("#logPhone").val(usrMp);
+   if (usrMp == null || usrMp == '')
+   {
+	     mui.alert(popupTIPS.tips32, '提示');
+         return false;
+    }
+   if (usrMp.length<11)
+   {
+	    mui.alert(popupTIPS.tips44, '提示');
+        return false;
+   }
+   if(!reg.test(usrMp))
+   {
+	    mui.alert(popupTIPS.tips38, '提示');
+	    return false;
+   }
+   return true;
+}
+/**
+ * 发送短信验证码
+ */
+function sendCode(){
+	sendPhoneCodeFlag =false;
+	if(!checkPhone()){
+		return false;
+	}
+ 	var logPhone = $.trim($("#logPhone").val());
+  	$("#logPhone").val(logPhone);
+ 	var logImgCode = $('#logImgCode').val();
+	var param = {};
+	param["sessionId"] = picNumber;
+	param["mobile"] = logPhone;
+	param["picCode"] = logImgCode;
+	param["apiVersion"] = apiVersion;
+	param["md5Sign"] = hex_md5("QSFETTUGBVNEREWR;sessionId:"+param.sessionId+";picCode:"+param.picCode+";mobile:"+param.mobile+";apiVersion:"+param.apiVersion).toUpperCase();
+ 	$.ajax({
+	    type : "post",
+	    url : CONST_SERVER_DOMAIN + "common/sendSms",
+	    dataType : "json",
+	    data : param,
+	    success : function(data){
+	    	console.log(data)
+		    if(data != null&& data!=''){
+			    if(data.state == 'S'){//短信发送成功
+			    	sendPhoneCodeFlag =true;
+			    	console.log("短信发送成功");
+			    	mui.alert(data.msg, '提示');
+			    }else{//短信发送失败
+			    	console.log("短信发送失败");
+					cdNum = 0;
+					clearInterval(cd);
+					$("#regGetMess").html("获取");
+			    	mui.alert(data.msg, '提示');
+			    }
+			    return;
+		     }
+		    //mui.alert(data.msg, '提示');
+		    return;
+	    },
+	    error: function(e) {
+	        mui.alert(popupTIPS.tips46, '提示');
+	        return;
+	    }
+	 });
+}
+/**
+ * 登录
+ */
+function commLogin(){
+	if(!checkPhone()){
+		return false;
+	}
+	var mobile = $("#logPhone").val();
+	var picCode = $("#logImgCode").val();
+	var smsCode = $("#regPhoneCode").val();
+	var loginParam = {};
+	loginParam["mobile"] = mobile;
+	loginParam["sessionId"] = picNumber;
+	loginParam["smsCode"] = smsCode;
+	loginParam["picCode"] = picCode
+	loginParam["apiVersion"] = apiVersion;
+	loginParam["devName"] = devName;
+	//md5加密;
+	loginParam["md5Sign"] = hex_md5( md5seri(loginParam) ).toUpperCase();
+	//console.log("打印值"+mobile+"---"+picNumber+"----"+smsCode+"----"+picCode+"----"+apiVersion+"---"+devName)
+	//console.log("打印MD5"+loginParam.md5Sign)
+    var aRequestData = loginParam ;
+    function aSuccessFunc(data){
+		//console.log("登录"+data.state +"MSG==="+ data.msg);
+    	if( data.state == "S"){
+			mui.alert( data.msg , '提示' );
+			
+			/*console.log( data.data.userId );
+            console.log( data.data.mobile );
+            console.log( data.data.username );
+			console.log( data.data.certnumber );*/
+			//将userId 等信息保存到本地
+            /*setLocal( "userId", data.data.userId );
+			setLocal( "userName", data.data.username );
+            setLocal( "IDCard", data.data.certnumber );*/
+			//记录用户的登录状态;
+			if( isSessionStorageSupported() ){
+				//将userId 等信息保存到本地
+				//alert(123)
+				setLocal( "userId", data.data.userId );
+				setLocal( "userName", data.data.username );
+				setLocal( "IDCard", data.data.certnumber );
+				setcache("mobile", data.data.mobile);
+				//saveLoginStatus( data.data.mobile );
+				//alert( getcache("mobile") );
+			}else{
+				//将userId 等信息保存到本地
+				setCookie( "userId", data.data.userId );
+				setCookie( "userName", data.data.username );
+				setCookie( "IDCard", data.data.certnumber );
+				//setCookie("mobile", data.data.mobile, 2);
+				//alert( setCookie("mobile") );
+			}
+			setCookie("mobile", data.data.mobile, 2);
+			//根据用户登录前的地址登录后跳转到相应页面;
+			window.location = getUrlParam("url") ? getUrlParam("url") : "private.html";
+		}
+    	if(data.state == "F"){
+    		mui.alert( data.msg , '提示' );
+    	}
+    }
+    function aErrorFunc(){
+    	mui.alert(popupTIPS.tips46, '提示');
+        return;
+    }
+    if(!$(".hl_agree").hasClass('checkedOn')){
+        //同意欢旅金服服务协议
+        mui.alert(popupTIPS.tips47, '提示');
+        return;
+    }
+	httpAjax('POST','user/login', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);
+}
+//=====================短信验证码
+//倒计时变量;
+var cdNum = 0;
+var cd;
+$(document).on("touchend", "#regGetMess",function(){
+	if(isClick){
+		$("#logImgCode").blur();
+		
+		if(!checkPhone()){
+			return false;
+		}
+		if( !$("#logImgCode").val() ){
+			mui.alert(popupTIPS.tips33, '提示');
+			return;
+		}
+		//点击获取短信验证码倒计时提示
+		if( cdNum > 0 ){
+			return;
+		}
+		cdNum = 60;
+		$("#regGetMess").html("再次获取(" + cdNum + ")");
+		cd = setInterval(function(){
+			cdNum--;
+			if( cdNum < 0  ){
+				cdNum = 0;
+				$("#regGetMess").html("再次获取");
+				clearInterval(cd);
+			}else{
+				$("#regGetMess").html("再次获取(" + cdNum + ")");
+			}
+		},1000)
+		//发送短信调用请求;
+		sendCode();
+	}
+	return false;
+});
+
+window.onload = function(){
+    verifyCode();
+}
+
+</script>
+<script>
+    $(document).ready(function(){
+		//根据协议勾选状态判断按钮是否可点击;
+        var isCheck = true;
+        $(".hl_agree").click(function(){
+            var selectP = $(".hl_agree");
+            isCheck = !isCheck;
+            if (isCheck) {
+               selectP.removeClass("checkedOff").addClass("checkedOn");
+            } else {
+               selectP.removeClass("checkedOn").addClass("checkedOff");
+            }
+            if(checkComplect()){
+                $('.btn').removeAttr('disabled');
+                $('.btn').removeClass('btn-default');
+            }else{
+                $('.btn').attr('disabled','disabled');
+                $('.btn').addClass('btn-default');
+            }
+        });
+//      $(document).bind('touchstart',function(){           
+//          if(checkComplect()){
+//              $('.btn').removeAttr('disabled');
+//              $('.btn').removeClass('btn-default');
+//          }else{
+//              $('.btn').attr('disabled','disabled');
+//              $('.btn').addClass('btn-default');
+//          }
+//      });
+//      $('.checkHasValue').bind('input',function(){
+//          if(checkComplect()){
+//              $('.btn').removeAttr('disabled');
+//              $('.btn').removeClass('btn-default');
+//          }else{
+//              $('.btn').attr('disabled','disabled');
+//              $('.btn').addClass('btn-default');
+//          }
+//      });
+        function checkComplect(){
+            var isComtected = true;
+//          $('.checkHasValue').each(function(){
+//             if(!$(this).val()){
+//                 isComtected = false;
+//             }
+//          }); 
+            if(!$('.hl_agree').hasClass('checkedOn')){
+                isComtected = false;
+            }
+            return isComtected;
+        }
+    });
+</script>
+</body>
+</html>

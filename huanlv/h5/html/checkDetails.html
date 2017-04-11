@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>账单详情</title>
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+<!-- APP自用CSS -->
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/hl_style.css">
+<link rel="stylesheet" type="text/css" href="../css/InstallmentPayment.css">
+<style type="text/css">
+.repaymentPlan-c .repaymentPlan-l{width: 42%;}
+.repaymentPlan-r span{margin-left: 10px;}
+</style>
+</head>
+<body class="hl_mainbg">
+<header class="mui-bar mui-bar-nav hl_headerSty">
+   <a class="mui-icon mui-icon-left-nav mui-pull-left" href="checkList.html?goback=null"></a>
+   <h1 class="mui-title">账单详情</h1>
+</header>
+<!-- 占位 -->
+<section class="mt50"><p class="hl_bespeakTips1"></p></section>
+<div class="hl_checkDetail">
+   <!-- 头部主栈格 -->
+    <ul class="hl_top hl_check_cell">
+        <li class="hl_bord_lgray">
+            <p class="hl_black33">本期应还</p>
+            <span class="hl_orange" id="payMoney">￥-</span>
+        </li>
+        <li>
+            <p class="hl_black33">未还总金额</p>
+            <span class="hl_orange" id="subAmt">￥-</span>
+        </li>
+    </ul>
+    <!-- 小标签按钮 -->
+    <ul class="hl_top hl_checkDte_title">
+        <li class="">
+        	<img src="../images/securIcon01.png">
+            <font class="f9" id="earlyRepayment">提前还款</font>
+        </li>
+        <li class="customer">
+        	<img src="../images/securIcon02.png">
+            <a class="f9" onClick="callMobile()" id="phoneBtn">联系客服</a>
+        </li>
+        <li>
+        	<img src="../images/securIcon03.png">
+            <font class="hl_bord_lgray f9" id="repaymentPlan">还款计划</font>
+        </li>
+    </ul>
+    <div class="hl_msg">
+    	<div class="hl_label">
+    		<span>分期金额</span>
+    		<font class="hl_itemFont hl_orange" id="bill_amt"><!--￥3888.00--></font>
+    	</div>
+    	<div class="hl_label">
+    		<span>收款账户</span>
+    		<font class="hl_itemFont" id="payBankName"><!--中国银行(1234)--></font>
+    	</div>
+    	<div class="hl_label">
+    		<span>分期数</span>
+    		<font class="hl_itemFont" id="stageNo"><!--12期--></font>
+    	</div>
+    	<div class="hl_label">
+    		<span class="hl_add_bottom">月利率</span>
+    		<font class="hl_itemFont hl_add_bottom" id="rate"><!--2%--></font>
+    	</div>
+    	<div class="hl_label">
+    		<span>起止时间</span>
+    		<font class="hl_itemFont" style="clear:both;"><i id="startTime"></i> 至 <i id="endTime"></i></font>
+    	</div>
+    	<div class="hl_label">
+    		<span>首次还款日</span>
+    		<font class="hl_itemFont" id="repay_date"><!--2016/01/01--></font>
+    	</div>
+    	<div class="hl_label" style="clear:both;">
+    		<span class="hl_add_bottom">还款日</span>
+    		<font class="hl_itemFont hl_add_bottom" id="otherdate"><!--每月01日--></font>
+    	</div>
+    	<div class="hl_label" style="clear:both;">
+    		<span>违约金</span>
+    		<font class="hl_itemFont hl_orange" id="break_amt"><!--￥888.00--></font>
+    	</div>
+    	<!--<div class="hl_label">
+    		<span></span>
+    		<font class="hl_itemFont"></font>
+    	</div>-->
+    	<!-- <div class="hl_label">
+    		<span>滞纳金</span>
+    		<font class="hl_itemFont hl_orange" id="expire_amt"></font>
+    	</div> -->
+    </div>
+	<!-- 还款计划弹出框-->
+	<div class="popupbox" style="z-index: 200;display: none;">
+		<div class="bg"></div>
+		<div class="popbox" style="width: 300px;">
+			<div class="orc">
+				<div class="closeBox"></div>
+			</div>
+			<div class="repaymentPlan">
+				<div class="rP-container" style="margin: 0 0 10px 30px;">
+					<div id="plan"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--mui自带类库-->
+<script src="../js/mui.min.js"></script>
+<!--jquery类库-->
+<script src="../js/jquery-1.9.1.min.js"></script>
+<!--公共方法类库-->
+<script src="../js/common.js"></script>
+<!--MD5加密类库-->
+<script src="../js/md5-min.js"></script>
+<script type="text/javascript">
+	//获取账单ID;
+	var billId = getUrlParam("billId");
+	
+	$(function(){
+		//==================读取本地缓存;判断是否登录;
+		gotologin();
+		
+		//获取基础数据;
+		var param = {};
+		param["apiVersion"] = apiVersion;
+		param["devName"] = devName;
+		param["billId"] = billId;    //正式环境读取 ;16081317361348181836
+		param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+		//console.log( param );
+		var aRequestData = param;
+		
+		httpAjax("GET", "order/tradeBillListInfo", aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);
+		
+		//请求成功返回函数;
+		function aSuccessFunc(data){
+			//console.log( data );
+			if( data.state == "S" ){
+				//本期应还金额;
+				$("#payMoney").html( "￥" + FormatMoney( data.data.balAmt, 2 ) );
+				//未还款总额;
+				$("#subAmt").html( "￥" + FormatMoney( data.data.subAmt, 2 ) );
+				//分期金额;
+				$("#bill_amt").html( "￥" + FormatMoney( data.data.bill_amt, 2 ) );
+				//还款银行;
+				$("#payBankName").html( data.data.paybankname );
+				//账单期数
+				$("#stageNo").html( data.data.prodStages + "期" );
+				//月利率
+				$("#rate").html( data.data.rate + "%" );
+				//开始时间
+				$("#startTime").html( data.data.startTime );
+				//结束时间;
+				$("#endTime").html( data.data.endTime );
+				//首次还款日;
+				$("#repay_date").html( data.data.repay_date);
+				//还款日期
+				$("#otherdate").html( data.data.otherdate );
+				//违约金;
+				$("#break_amt").html( "￥" + FormatMoney( data.data.break_amt, 2 ) );
+				//滞纳金;
+				//$("#expire_amt").html( "￥" + FormatMoney( data.data.expire_amt,2 ) );
+				
+			}
+			if( data.state == "F" ){
+				mui.alert( data.msg, '提示');	
+			}
+		}
+		
+		//请求失败返回函数;
+		function aErrorFunc(data){
+			//console.log( data.msg );
+		}
+		
+		//点击提前还款事件;
+		$("#earlyRepayment").on("touchend",function(){
+			if(isClick){
+				mui.alert(popupTIPS.tips1, '提示');
+				//window.location.href = "checkBefore.html?billId=" + billId;
+			}
+		})
+		
+		//调用还款计划接口
+		checkDetailPlan();
+		
+		//联系客服;
+		function callMobile(){
+		    //if(isWeiXin()){
+		        /*window.location.href = "checkDetails.html#mp.weixin.qq.com";*/
+				$("#phoneBtn").attr("href", "tel:" + telNumber);
+		    //}
+		}
+		
+		//还款计划;bg
+		$("#repaymentPlan").on("touchend",function(){
+			if(isClick){
+				$(".popupbox").show();
+				$(".orc").click(function(){
+	                $(".popupbox").hide();
+	            })
+			}
+		})
+		
+	})
+	//获取还款计划数据
+	function checkDetailPlan(){
+		 var aRequestData = {"apiVersion": apiVersion , "devName": devName, "billId" : billId }
+		 function aSuccessFunc(msg){
+			var str = "";
+            for(var i=0; i < msg.data.length; i++ ){
+            	//console.log(msg.data[i])
+            	var a = msg.data[i].plansDate;
+            	var b = a.split("-");
+    			var date = b[0]+ '年' + b[1] + '月' + b[2] + '日';
+    			if(msg.data[i].billState == '还款中'){
+    				BillState = '还款中';
+    			}else if(msg.data[i].billState == '已还清'){
+    				BillState = '已还清';
+    			}else if(msg.data[i].billState == '已逾期'){
+    				BillState = '已逾期';
+    			}else{
+    				BillState = '';
+    			}
+    			if(msg.data.length == '0' || msg.data.length == null || msg.data.length == undefined){
+    				str += '<div style="text-align:center;margin-left:-30px;">暂无数据...</div>';
+    			}else{
+    				str += '<div class="repaymentPlan-c"><div class="repaymentPlan-l">'+ date +'</div><div class="repaymentPlan-r"><span >￥'+ msg.data[i].plansAmt +'</span><span>'+ BillState +'</span></div></div>'
+    			}
+            }
+            $("#plan").html(str);
+        }
+        function aErrorFunc(){
+        	console.log("======未知错误");
+        }
+        httpAjax('GET','order/findTradeRepay', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);  
+    }
+</script>
+
+</body>
+</html>

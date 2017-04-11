@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="apple-mobile-web-app-title" content="欢旅金服支付协议">
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+	    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+	    <meta name="format-detection" content="telephone=no">
+		<title>支付协议</title>
+		<link rel="stylesheet" href="../css/index.css"/>
+	    <script src="../js/zepto.min.js"></script>
+	    <script src="../js/md5-min.js"></script>
+	    <script src="../js/index1.js"></script>
+  		<script src="../js/fastclick.js"></script>
+	    <script src="../js/App_Const.js"></script>
+	    <script type="text/javascript" src="../js/pdf.js"></script>
+	    <style type="text/css">
+	    	.con{
+	    		width: 100%;
+	    		height:100%;
+	    		text-align:center;
+	    	}
+		    .btn_group{
+		    	margin:0.2rem 0;
+		    }
+		    #the-canvas{
+		    	border:1px solid black;
+		    	width:92%;
+		    	box-sizing: border-box;
+		    }
+	    </style>
+	</head>
+	<script>
+        !function (N, M) {  /*动态设置DPR*/
+            function L() {
+                var a = I.getBoundingClientRect().width;
+                a / F > 540 && (a = 540 * F);
+                var d = a / 10;
+                I.style.fontSize = d + "px", D.rem = N.rem = d
+            }
+
+            var K, J = N.document, I = J.documentElement, H = J.querySelector('meta[name="viewport"]'), G = J.querySelector('meta[name="flexible"]'), F = 0, E = 0, D = M.flexible || (M.flexible = {});
+            if (H) {
+                console.warn("将根据已有的meta标签来设置缩放比例");
+                var C = H.getAttribute("content").match(/initial\-scale=([\d\.]+)/);
+                C && (E = parseFloat(C[1]), F = parseInt(1 / E))
+            } else {
+                if (G) {
+                    var B = G.getAttribute("content");
+                    if (B) {
+                        var A = B.match(/initial\-dpr=([\d\.]+)/), z = B.match(/maximum\-dpr=([\d\.]+)/);
+                        A && (F = parseFloat(A[1]), E = parseFloat((1 / F).toFixed(2))), z && (F = parseFloat(z[1]), E = parseFloat((1 / F).toFixed(2)))
+                    }
+                }
+            }
+            if (!F && !E) {
+                var y = N.navigator.userAgent, x = (!!y.match(/android/gi), !!y.match(/iphone/gi)), w = x && !!y.match(/OS 9_3/), v = N.devicePixelRatio;
+                F = x && !w ? v >= 3 && (!F || F >= 3) ? 3 : v >= 2 && (!F || F >= 2) ? 2 : 1 : 1, E = 1 / F
+            }
+            if (I.setAttribute("data-dpr", F), !H) {
+                if (H = J.createElement("meta"), H.setAttribute("name", "viewport"), H.setAttribute("content", "initial-scale=" + E + ", maximum-scale=" + E + ", minimum-scale=" + E + ", user-scalable=no"), I.firstElementChild) {
+                    I.firstElementChild.appendChild(H)
+                } else {
+                    var u = J.createElement("div");
+                    u.appendChild(H), J.write(u.innerHTML)
+                }
+            }
+            N.addEventListener("resize", function () {
+                clearTimeout(K), K = setTimeout(L, 300)
+            }, !1), N.addEventListener("pageshow", function (b) {
+                b.persisted && (clearTimeout(K), K = setTimeout(L, 300))
+            }, !1), "complete" === J.readyState ? J.body.style.fontSize = 12 * F + "px" : J.addEventListener("DOMContentLoaded", function () {
+                J.body.style.fontSize = 12 * F + "px"
+            }, !1), L(), D.dpr = N.dpr = F, D.refreshRem = L, D.rem2px = function (d) {
+                var c = parseFloat(d) * this.rem;
+                return "string" == typeof d && d.match(/rem$/) && (c += "px"), c
+            }, D.px2rem = function (d) {
+                var c = parseFloat(d) / this.rem;
+                return "string" == typeof d && d.match(/px$/) && (c += "rem"), c
+            }
+        }(window, window.lib || (window.lib = {}));
+    </script>
+	<script>
+		function goBack(){
+            window.javatojs.JSWithTypeAndJsonString("2",{});
+        }
+	</script>
+	<body>
+		<div class="pubHeader">
+    		<a href="javascript:void(0);" class="back" onClick="goBack();"></a>
+    		服务协议
+		</div>
+
+		<div class="con">
+		 	<div class="btn_group">
+			    <button id="prev" onclick="goPrevious()">上一页</button>
+			    &nbsp; &nbsp; &nbsp; &nbsp;
+			    <span>分页: <span id="page_num"></span> / <span id="page_count"></span></span>
+			     &nbsp; &nbsp; &nbsp; &nbsp;
+			    <button id="next" onclick="goNext()">下一页</button>
+		    </div>
+		  	<div>
+		    	<canvas id="the-canvas"></canvas>
+			</div>
+		</div>  
+
+		<script type="text/javascript">
+			// var url = "http://192.168.0.146:8080/temp/2016-07-11_null_1468245565641_view.pdf";
+			var url = getUrlParam("pdfUrl");
+			PDFJS.disableWorker = true;
+			var pdfDoc = null,
+			    pageNum = 1,
+			    scale = 1,
+			    canvas = document.getElementById('the-canvas'),
+			    ctx = canvas.getContext('2d');
+			
+			function renderPage(num) {
+			  
+			  	pdfDoc.getPage(num).then(function(page) {
+			  	var viewport = page.getViewport(scale);
+			    canvas.height = viewport.height;
+			    canvas.width = viewport.width;
+			
+			    
+			    var renderContext = {
+			    canvasContext: ctx,	
+			    viewport: viewport
+			};
+			    page.render(renderContext);
+			});
+			
+			document.getElementById('page_num').textContent = pageNum;
+			document.getElementById('page_count').textContent = pdfDoc.numPages;
+			}
+			
+			function goPrevious() {
+			    if (pageNum <= 1)
+			    return;
+			    pageNum--;
+			    renderPage(pageNum);
+			}
+			
+
+			function goNext() {
+			    if (pageNum >= pdfDoc.numPages)
+			    return;
+			    pageNum++;
+			    renderPage(pageNum);
+			}
+			PDFJS.getDocument(url).then(function getPdfHelloWorld(_pdfDoc) {
+			    pdfDoc = _pdfDoc;
+			    renderPage(pageNum);
+			});
+			// $.get("http://192.168.0.146:8080/site/common/generatePdf?userId=109600006", function (result) {
+		 //      var result = JSON.parse(result);
+		 //      var pdfResult = result;
+		 //      var Data = pdfResult.data;
+		 //      if (result.state == "S") {
+		 //        if (pdfResult.data.length != 0) {
+		 //           	var url = Data.filePath;
+		 //            // var url = 'http://192.168.0.146:8080/temp/2016-07-11_null_1468242225821_view.pdf';
+			// 		PDFJS.disableWorker = true;
+			// 		var pdfDoc = null,
+			// 		    pageNum = 1,
+			// 		    scale = 1,
+			// 		    canvas = document.getElementById('the-canvas'),
+			// 		    ctx = canvas.getContext('2d');
+					
+			// 		function renderPage(num) {
+					  
+			// 		  	pdfDoc.getPage(num).then(function(page) {
+			// 		  	var viewport = page.getViewport(scale);
+			// 		    canvas.height = viewport.height;
+			// 		    canvas.width = viewport.width;
+					
+					    
+			// 		    var renderContext = {
+			// 		    canvasContext: ctx,	
+			// 		    viewport: viewport
+			// 		};
+			// 		    page.render(renderContext);
+			// 		});
+					
+			// 		document.getElementById('page_num').textContent = pageNum;
+			// 		document.getElementById('page_count').textContent = pdfDoc.numPages;
+			// 		}
+					
+			// 		function goPrevious() {
+			// 		    if (pageNum <= 1)
+			// 		    return;
+			// 		    pageNum--;
+			// 		    renderPage(pageNum);
+			// 		}
+					
+
+			// 		function goNext() {
+			// 		    if (pageNum >= pdfDoc.numPages)
+			// 		    return;
+			// 		    pageNum++;
+			// 		    renderPage(pageNum);
+			// 		}
+			// 		PDFJS.getDocument(url).then(function getPdfHelloWorld(_pdfDoc) {
+			// 		    pdfDoc = _pdfDoc;
+			// 		    renderPage(pageNum);
+			// 		});
+		 //        } 
+		 //      }
+		 // 	else {
+		 //        	slideDownAlert(pdfResult.msg);
+		 //      }
+		    // });
+		// 获取查询字符串 封装函数
+		  function getUrlParam(name) {
+		    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+		    var r = window.location.search.substr(1).match(reg);
+		    if (r != null)
+		      return unescape(r[2]);
+		    return null;
+		  }	
+		</script>  
+	</body>
+</html>

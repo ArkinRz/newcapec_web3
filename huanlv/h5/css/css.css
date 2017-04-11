@@ -1,0 +1,378 @@
+@charset "utf-8";
+html {
+    color: #000;
+    background: #fff;
+    overflow-y: scroll;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%
+}
+
+html * {
+    outline: 0;
+    -webkit-text-size-adjust: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0)
+}
+
+html, body {
+    font-family: sans-serif;
+    height:100%;
+}
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td, hr, button, article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+    margin: 0;
+    padding: 0
+}
+
+input, select, textarea {
+    font-size: 100%
+}
+
+input[type="submit"], input[type="reset"], input[type="button"], input[type="text"],input[type="password"],
+input[type="number"], textarea, button {
+    -webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:rgba(0,0,0,0);border-radius:0; outline:none;
+}
+a, img {
+    -webkit-touch-callout: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0
+}
+
+fieldset, img {
+    border: 0
+}
+
+abbr, acronym {
+    border: 0;
+    font-variant: normal
+}
+
+del {
+    text-decoration: line-through
+}
+
+address, caption, cite, code, dfn, em, th, var {
+    font-style: normal;
+    font-weight: 500
+}
+
+ol, ul {
+    list-style: none
+}
+
+caption, th {
+    text-align: left
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 100%;
+    font-weight: 500
+}
+
+q:before, q:after {
+    content: ''
+}
+
+sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline
+}
+
+sup {
+    top: -.5em
+}
+
+sub {
+    bottom: -.25em
+}
+
+a:hover {
+    text-decoration: underline
+}
+
+ins, a {
+    text-decoration: none
+}
+.clearfloat:after {
+    display: block;
+    clear: both;
+    content: "";
+    visibility: hidden;
+    height: 0;
+}
+
+/*
+[data-dpr="1"] #aaa {
+    font-size: 12px;
+}
+
+[data-dpr="2"] #aaa {
+    font-size: 24px;
+}
+
+[data-dpr="3"] #aaa {
+    font-size: 36px;
+}*/
+/*注册******/
+body.regLog {
+    background: url(../images/login.png) no-repeat;
+    background-position: center top;
+    -webkit-background-size: 100% 100%;
+}
+#regHeader {
+    width:10rem;
+    height:1.06666rem;
+    line-height:1.06666rem;
+    text-align: center;
+    position:relative;
+    margin:0 auto;
+    font-size: 0.50066rem;
+    color:#fff;
+}
+#regHeader .back{
+    position:absolute;
+    left:0.32rem;
+    display: block;
+    width:0.2666667rem;
+    height:1.06666rem;
+    line-height:1.06666rem;
+    background:url("../images/goBack.png") no-repeat;
+    background-size: 0.2666667rem auto;
+    background-position: center;
+}
+.regLogin {
+    width:8.72rem;
+    margin:0 auto;
+    padding-top: 1.33333rem;
+}
+.regLogin .list{
+    width:8.72rem;
+    height:1.173333rem;
+    line-height: 1.173333rem;
+    display:-webkit-box;
+    /*background-color: rgba(0, 0, 0, 0.2);*/
+	border-bottom: 0.026rem solid #fff;
+    margin-bottom: 0.32rem;
+    position:relative;
+    /*-webkit-border-radius:8px;*/
+}
+.regLogin .list.onFocus {
+    width:8.668rem;
+    height:1.121333rem;
+    line-height: 1.121333rem;
+    border-bottom: 0.026rem #73e5e5 solid;
+}
+.regLogin .list label {
+    display: inline-block;
+    height:1.173333rem;
+    padding-left: 1rem;
+}
+.regLogin .normal label.phone {
+    background: url("../images/hl_icon6.png") no-repeat;
+    background-position: 0.26rem center;
+    background-size: 0.56rem;
+}
+.regLogin .onFocus label.phone {
+    background: url("../images/regNumOn.png") no-repeat;
+    background-position: 0.26rem center;
+    background-size: 0.56rem;
+}
+.regLogin .normal label.imgCode {
+    background: url("../images/hl_icon5.png") no-repeat;
+    background-position: 0.26rem center;
+    background-size: 0.56rem;
+}
+.regLogin .onFocus label.imgCode {
+    background: url("../images/regImgOn.png") no-repeat;
+    background-position: 0.26rem center;
+    background-size: 0.56rem;
+}
+.regLogin .normal label.phoneCode {
+    background: url("../images/hl_icon4.png") no-repeat;
+    background-position: 0.26rem center;
+    background-size: 0.56rem;
+}
+.regLogin .onFocus label.phoneCode {
+    background: url("../images/regImgCodeOn.png") no-repeat;
+    background-position: 0.26rem center;
+    background-size: 0.56rem;
+}
+.regLogin .normal label.pass {
+    background: url("../images/regPass.png") no-repeat;
+    background-position: 0.26rem center;
+    background-size: 0.56rem;
+}
+.regLogin .onFocus label.pass {
+    background: url("../images/regPassOn.png") no-repeat;
+    background-position: 0.26rem center;
+    background-size: 0.56rem;
+}
+.regLogin .normal label.passConfirm {
+    background: url("../images/regIn.png") no-repeat;
+    background-position: 0.26rem center;
+    background-size: 0.56rem;
+}
+.regLogin .onFocus label.passConfirm {
+    background: url("../images/regInOn.png") no-repeat;
+    background-position: 0.26rem center;
+    background-size: 0.56rem;
+}
+
+.regLogin .list label input {
+	color:#fff;
+    height:0.53333rem;
+    background: transparent;
+    border:none;
+    border-left:1px #fff solid;
+    text-indent: 0.32rem;
+    font-size: 0.34666667rem;
+}
+.regLogin .list .ImgValide {
+    position:absolute;
+    right:0.32rem;
+    top:0.2533333rem;
+    width:1.6rem;
+    height:0.6666667rem;
+}
+.regLogin .list input.get {
+    position:absolute;
+    right:0.32rem;
+    top:0.2533333rem;
+    width:1.56rem;
+    height:0.6266667rem;
+    line-height: 0.6266667rem;
+    text-align: center;
+    font-size: 0.293333rem;
+    border:0.02rem #fff solid;
+    color:#fff;
+    /*background: transparent;*/
+	background: #fff;
+	color:#31b1ff;
+}
+.regLogin .list i.error {
+    position:absolute;
+    right:0.32rem;
+    top:0rem;
+    height:100%;
+    width:0.7rem;
+    display: block;
+    background: url("../images/eyeClose.png") no-repeat;
+    background-size: 0.693333rem 0.4rem;
+    background-position: center center;
+}
+.regLogin .list i.success {
+    position:absolute;
+    right:0.32rem;
+    top:0rem;
+    height:100%;
+    width:0.7rem;
+    display: block;
+    background: url("../images/eyeOpen.png") no-repeat;
+    background-size: 0.693333rem 0.4rem;
+    background-position: center center;
+}
+.regLogin p.agreement {
+    color:#fff;
+    font-size: 0.2933333rem;
+
+    text-indent: 0.153333rem;
+    margin:0.853333rem 0 0.16rem;
+}
+.regLogin p.agreement.checkedOn {
+    background: url("../images/regCheck.png") no-repeat;
+    background-size: 0.346667rem 0.346667rem;
+    background-position: left center;
+}
+.regLogin p.agreement.checkedOff {
+    background: url("../images/regCheckOff.png") no-repeat;
+    background-size: 0.346667rem 0.346667rem;
+    background-position: left center;
+}
+.regLogin p.agreement input {
+    transform: translateX(-10rem);
+    -webkit-transform: translateX(-10rem);
+}
+.regLogin .submit {
+    width:8.72rem;
+    height:1.173333rem;
+    line-height: 1.173333rem;
+    text-align: center;
+    font-size: 0.4266667rem;
+    border:none;
+    color:#fff;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+}
+.regLogin .submit.disable {
+    background-color: rgba(255, 206, 127, 0.3);
+}
+.regLogin .submit.enable {
+    background-color: #ffce7f;
+}
+
+/*登录*/
+#logSubmit,#retrieveSubmit,#resetSubmit {
+    background-color: rgba(115,229,229,0.3);
+}
+.regLogin .logforgetPass {
+    width: 8.72rem;
+    text-align: right;
+    margin:1.01333rem 0 0.53333rem;
+}
+.regLogin .logforgetPass a {
+    color:#fff;
+    font-size: 0.2933333rem;
+}
+.regLogin .hrefTo {
+    display: block;
+    width: 8.72rem;
+    height: 1.173333rem;
+    line-height: 1.173333rem;
+    text-align: center;
+    font-size: 0.4266667rem;
+    color: #fff;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    border:1px #ffce7f solid;
+    background: transparent;
+    margin-top: 0.32rem;
+}
+#slideDownAlert {
+    width:10rem;
+    padding:0.32rem 0;
+    position:fixed;
+    top:0rem;
+    background-color: rgba(0,0,0,0.5);
+    font-size: 0.4rem;
+    color:#fff;
+    -webkit-transform: translateY(-100%);
+    transition: all 0.3s ease;
+}
+/*重置密码*/
+.regLogin .setPhone {
+    width: 8.72rem;
+    margin:0 auto 0.6rem;
+    font-size: 0.3733333rem;
+    color:#fff;
+}
+#resetSubmit {
+    margin-top: 0.7466667rem;
+}
+#slideDownAlert p {
+    text-indent: 0.4rem;
+    width:8.72rem;
+    text-align: center;
+}
+#slideDownAlert span {
+    position:absolute;
+    right:0.4rem;
+    top:0rem;
+    height:100%;
+    width:1rem;
+    background: url("../images/alertClose.png") no-repeat;
+    background-position: right center;
+    -webkit-background-size: 0.32rem;
+}

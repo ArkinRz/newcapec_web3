@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="apple-mobile-web-app-title" content="欢旅金融登录">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>学籍验证</title>
+<!-- APP自用CSS -->
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/hl_style.css">
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+</head>
+<body class="hl_mainbg">
+<header class="mui-bar mui-bar-nav hl_headerSty">
+   <a class="mui-icon mui-icon-left-nav mui-pull-left" href="privateCreLight.html"></a>
+   <h1 class="mui-title">学籍验证</h1>
+</header>
+<!-- 占位 -->
+<section class="mt44"></section>
+<div class="hl_yz_content">
+	<div class="hl_yz_row">
+		<p class="hl_black33 f10">姓名</p>
+		<span class="hl_black33 f10" id="userName">-</span>
+	</div>
+	<!-- <div class="hl_yz_row">
+		<p class="hl_black33 f10">身份证</p>
+		<span class="hl_black33 f10" id="cardId">-</span>
+	</div> -->
+    <div class="hl_yz_row">
+        <p class="hl_black33 f10">学信网账号</p>
+        <span class="hl_black33 f10" id="account">-</span>
+    </div>
+	<!-- <div class="hl_yz_input">
+		<p class="hl_black33 f10">学信网账号</p>
+        <span class="hl_black33 f10" id="account">-</span>
+		<input type="text" class="hl_fupass"  name="" placeholder="手机/邮箱/身份证" id="account">
+	</div> -->
+	<div class="hl_yz_input">
+		<p class="hl_black33 f10">学信网密码</p>
+		<input type="password" class="hl_fupass" value="" name="" placeholder="密码" id="psd">
+	</div>
+	<div class="hl_yz_row">
+		<a href="https://account.chsi.com.cn/account/password!retrive" class="fr f10">没有学信网密码？</a>
+	</div>
+</div>
+<div  class="hl_btn">
+	<input type="submit" class="btn btn_blue" value="验证" id="sub_btn">
+</div>
+
+
+  <div class="popupbox dn">
+    <div class="bg"></div>
+    <div class="popbox">
+      <div class="content">您输入的密码或手机验证码不正确，请确认后重新输入。</div>
+      <div class="orc">
+          <div class="cancel popupbox_cancel">取消</div>
+          <div class="ok popupbox_ok">确认</div>
+      </div>
+      <div class="justok dn popupbox_ok">确认</div>
+    </div>
+  </div>
+
+  <!--图片解析弹窗-->
+<div id="tipsBox">
+    <div>
+        <img src="../images/loading_big.gif"/>
+        <p id="tipsText">验证中,请稍后!</p>
+    </div>
+</div>
+
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/md5-min.js"></script>
+<script src="../js/common.js"></script>
+<script>
+	mui.init({
+		swipeBack:true //启用右滑关闭功能
+	});
+//==================读取本地缓存;判断是否登录;
+gotologin('flag');//传入参数 表示登录后页面不跳转直接进入'我的'
+//==================从缓存中获取userid, moblie; 
+var mobile, userId, userName, cardId;
+//判断用户登录状态,如果是已登录,读取
+if( getLoginStatus() ){
+    //获取用户userId, mobile;
+    userId = getLocal("userId") || getCookie( "userId");
+    //获取用户手机号;
+    mobile = getLoginStatus();
+    userName = getLocal("userName") || getCookie( "userName");
+    cardId = getLocal("IDCard") || getCookie( "IDCard");
+}
+
+$("#mobile").text(mobile);
+$("#userName").text(userName);
+// $("#cardId").text(cardId);
+$("#account").text(cardId);
+
+$("#sub_btn").click(function(){
+	// console.log(1);
+	if ( $("#psd").val() == "" ){
+		$(".popupbox").show();
+		$(".justok").removeClass("dn");
+		$(".orc").addClass("dn");
+		$(".content").html(popupTIPS.tips63);
+		return;
+	}
+    $('#tipsBox').css({display: 'block'});
+	userSchoolrollVer();
+})
+
+function userSchoolrollVer(){
+    // md5
+    var param = {};
+        param["devName"] = devName;
+        param["apiVersion"] = apiVersion;
+        param["userId"] = userId;
+        param["userName"] = userName;
+        param["cardId"] = cardId;
+        param["mobile"] = mobile;
+        param["account"] = cardId;
+        param["password"] = $("#psd").val();
+    //md5加密;
+    param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+    var aRequestData = param;
+    function aSuccessFunc(msg){
+    	
+    	if(msg.state=="S"){
+    		// console.log("验证中。。")
+            $('#tipsBox').css({display: 'none'});
+            window.location.href="privateCreLight.html";
+    	}else if(msg.state=="F"){
+            $('#tipsBox').css({display: 'none'});
+            // mui.alert(msg.msg);
+            console.log(msg)
+            $(".popupbox").show();
+            $(".justok").removeClass("dn");
+            $(".orc").addClass("dn");
+            $(".content").html( msg.msg );
+
+            console.log($("#account").text());
+            // $("#account").val("");
+            $("#psd").val("");
+        }
+    }
+    function aErrorFunc(){
+    	// console.log("错了！召唤师。")
+    	$('#tipsBox').css({display: 'none'});
+    	$(".popupbox").show();
+    	$(".content").html(popupTIPS.tips60);
+    }
+	httpAjax('POST','trdcredit/jxlxxwstandreq', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut); 
+}
+$('#tipsBox').bind('touchmove',function(){
+    return false;
+});
+</script>
+</body>
+</html>

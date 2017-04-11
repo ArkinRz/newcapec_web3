@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>收藏页</title>
+  	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<!--标准mui.css-->
+    <link rel="stylesheet" href="../css/mui.min.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="../css/app.css">
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+</head>
+
+<body>
+	<!--头部-->
+    <header class="mui-bar mui-bar-nav mui_nav_bg">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" id="goBack"></a>
+        <h1 class="mui-title">收藏</h1>
+    </header>
+    <!--图文混排-->
+    <ul id="OA_task_1" class="mui-table-view mt44 mui-list-sc">
+        <li class="mui-table-view-cell">
+            <div class="mui-slider-right mui-disabled">
+                <a class="mui-btn mui-btn-red">删除</a>
+            </div>
+            <div class="mui-slider-handle">
+                <a href="javascript:;">
+                    <img class="mui-media-object mui-pull-left" src="../images/1.jpg">
+                    <div class="mui-media-body">
+                        呼市+希拉穆仁大草原+响沙湾双飞4日跟团游<草原美拍 宿舒适酒店>
+                        <p class="mui-ellipsis">1天1晚 | 截止日期6月30日</p>
+                        <p class="mui-ellipsis hl_hd"><cite class="f6">￥1298</cite><em>0首付</em><em>0利息</em></p>
+                        <p class="mui-ellipsis hl_yellow"><i>3</i>期 | ￥<i>432.67</i>/期</p>
+                    </div>
+                </a>
+            </div>
+        </li>
+        <li class="mui-table-view-cell">
+            <div class="mui-slider-right mui-disabled">
+                <a class="mui-btn mui-btn-red">删除</a>
+            </div>
+            <div class="mui-slider-handle">
+                <a href="javascript:;">
+                    <img class="mui-media-object mui-pull-left" src="../images/1.jpg">
+                    <div class="mui-media-body">
+                        呼市+希拉穆仁大草原+响沙湾双飞4日跟团游<草原美拍 宿舒适酒店>
+                        <p class="mui-ellipsis">1天1晚 | 截止日期6月30日</p>
+                        <p class="mui-ellipsis hl_hd"><cite class="f6">￥1298</cite><em>0首付</em><em>0利息</em></p>
+                        <p class="mui-ellipsis hl_yellow"><i>3</i>期 | ￥<i>432.67</i>/期</p>
+                    </div>
+                </a>
+            </div>
+        </li>
+        <li class="mui-table-view-cell">
+            <div class="mui-slider-right mui-disabled">
+                <a class="mui-btn mui-btn-red">删除</a>
+            </div>
+            <div class="mui-slider-handle">
+                <a href="javascript:;">
+                    <img class="mui-media-object mui-pull-left" src="../images/1.jpg">
+                    <div class="mui-media-body">
+                        呼市+希拉穆仁大草原+响沙湾双飞4日跟团游<草原美拍 宿舒适酒店>
+                        <p class="mui-ellipsis">1天1晚 | 截止日期6月30日</p>
+                        <p class="mui-ellipsis hl_hd"><cite class="f6">￥1298</cite><em>0首付</em><em>0利息</em></p>
+                        <p class="mui-ellipsis hl_yellow"><i>3</i>期 | ￥<i>432.67</i>/期</p>
+                    </div>
+                </a>
+            </div>
+        </li>
+    </ul>
+    
+    
+	
+<script src="../js/mui.min.js"></script>
+
+<script>
+	mui.init();
+	(function($) {
+		//$.swipeoutOpen(el,direction)//打开指定列的滑动菜单，el:指定列的dom对象，direction：取值left|right，指定打开的是左侧或右侧滑动菜单
+		//$.swipeoutClose(el);//关闭指定列的滑动菜单，el:指定列的dom对象
+		//				setTimeout(function() {
+		//					$.swipeoutOpen(document.getElementById("OA_task_1").querySelector('li:last-child'), 'left');
+		//					setTimeout(function() {
+		//						$.swipeoutClose(document.getElementById("OA_task_1").querySelector('li:last-child'));
+		//					}, 1000);
+		//				}, 1000);
+		//第一个demo，拖拽后显示操作图标，点击操作图标删除元素；
+		$('#OA_task_1').on('tap', '.mui-btn', function(event) {
+			var elem = this;
+			var li = elem.parentNode.parentNode;
+			mui.confirm('确认删除该条记录？', '自定义', btnArray, function(e) {
+				if (e.index == 0) {
+					li.parentNode.removeChild(li);
+				} else {
+					setTimeout(function() {
+						$.swipeoutClose(li);
+					}, 0);
+				}
+			});
+		});
+		var btnArray = ['确认', '取消'];
+		//第二个demo，向左拖拽后显示操作图标，释放后自动触发的业务逻辑
+		$('#OA_task_2').on('slideleft', '.mui-table-view-cell', function(event) {
+			var elem = this;
+			mui.confirm('确认删除该条记录？', '自定义', btnArray, function(e) {
+				if (e.index == 0) {
+					elem.parentNode.removeChild(elem);
+				} else {
+					setTimeout(function() {
+						$.swipeoutClose(elem);
+					}, 0);
+				}
+			});
+		});
+		
+	})(mui);
+</script>
+
+
+
+<script>
+    !function (N, M) {  /*动态设置DPR*/
+      function L() {
+        var a = I.getBoundingClientRect().width;
+        a / F > 540 && (a = 540 * F);
+        var d = a / 10;
+        I.style.fontSize = d + "px", D.rem = N.rem = d
+      }
+
+      var K, J = N.document, I = J.documentElement, H = J.querySelector('meta[name="viewport"]'), G = J.querySelector('meta[name="flexible"]'), F = 0, E = 0, D = M.flexible || (M.flexible = {});
+      if (H) {
+        console.warn("将根据已有的meta标签来设置缩放比例");
+        var C = H.getAttribute("content").match(/initial\-scale=([\d\.]+)/);
+        C && (E = parseFloat(C[1]), F = parseInt(1 / E))
+      } else {
+        if (G) {
+          var B = G.getAttribute("content");
+          if (B) {
+            var A = B.match(/initial\-dpr=([\d\.]+)/), z = B.match(/maximum\-dpr=([\d\.]+)/);
+            A && (F = parseFloat(A[1]), E = parseFloat((1 / F).toFixed(2))), z && (F = parseFloat(z[1]), E = parseFloat((1 / F).toFixed(2)))
+          }
+        }
+      }
+      if (!F && !E) {
+        var y = N.navigator.userAgent, x = (!!y.match(/android/gi), !!y.match(/iphone/gi)), w = x && !!y.match(/OS 9_3/), v = N.devicePixelRatio;
+        F = x && !w ? v >= 3 && (!F || F >= 3) ? 3 : v >= 2 && (!F || F >= 2) ? 2 : 1 : 1, E = 1 / F
+      }
+      if (I.setAttribute("data-dpr", F), !H) {
+        if (H = J.createElement("meta"), H.setAttribute("name", "viewport"), H.setAttribute("content", "initial-scale=" + E + ", maximum-scale=" + E + ", minimum-scale=" + E + ", user-scalable=no"), I.firstElementChild) {
+          I.firstElementChild.appendChild(H)
+        } else {
+          var u = J.createElement("div");
+          u.appendChild(H), J.write(u.innerHTML)
+        }
+      }
+      N.addEventListener("resize", function () {
+        clearTimeout(K), K = setTimeout(L, 300)
+      }, !1), N.addEventListener("pageshow", function (b) {
+        b.persisted && (clearTimeout(K), K = setTimeout(L, 300))
+      }, !1), "complete" === J.readyState ? J.body.style.fontSize = 12 * F + "px" : J.addEventListener("DOMContentLoaded", function () {
+        J.body.style.fontSize = 12 * F + "px"
+      }, !1), L(), D.dpr = N.dpr = F, D.refreshRem = L, D.rem2px = function (d) {
+        var c = parseFloat(d) * this.rem;
+        return "string" == typeof d && d.match(/rem$/) && (c += "px"), c
+      }, D.px2rem = function (d) {
+        var c = parseFloat(d) / this.rem;
+        return "string" == typeof d && d.match(/px$/) && (c += "rem"), c
+      }
+    }(window, window.lib || (window.lib = {}));
+  </script>
+  <script>
+    $('#goBack').bind('click', function () {
+      window.javatojs.JSWithTypeAndJsonString("2", {});
+    });
+  </script>
+</body>
+</html>

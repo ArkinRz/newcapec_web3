@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='productDetailApp'>
+<head>
+<meta charset="utf-8">
+<title>产品详情页</title>
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Expires" content="-1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Pragma" content="no-cache">
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+<!--App自定义的css-->
+<link rel="stylesheet" type="text/css" href="../css/main.css">
+
+<style>
+.title{margin: 20px 15px 7px;color: #6d6d72;font-size: 15px;}
+.mui-control-content {background-color: white;min-height: 215px;}
+.mui-control-content .mui-loading {margin-top: 50px;}
+.hl_servePromise,.hl_ReturnLossDescribe{width: 97%;padding: 3px 0;}
+.hl_servePromise em,.hl_ReturnLossDescribe em{color: #ff6600;font-size: 12px;padding: 0 3px;}
+.hl_servePromise em:nth-child(1),.hl_ReturnLossDescribe em:nth-child(1){margin-left: 0; }
+.mui-table-view .add_cell{padding: 7px 3px 7px 15px;position: relative;}
+.mui-table-view .add_cell .items{margin: 0;position: absolute;color: #8f8f94;}
+.mui-table-view .add_cell .itemsContent{margin-left: 65px;margin-top: 0; display: block; font-size: 14px;}
+.hl_yellow{border-bottom: 1px solid #cbcacb;padding: 3px 0;}
+.mui-table-view{padding: 3px 0;}
+.mui-bar-nav~.mui-content{padding-top: 0;}
+.mui-detail-mar .hl_hd {margin: 0;margin-top: 7px;}
+.mui-slider-indicator .mui-indicator{margin: 1px 10px 1px 3px;}
+.mui-slider-indicator .mui-indicator:nth-child(1){margin: 1px 6px;}
+#sliderProgressBar{height: 1px;width: 100%;background: #b2b2b2;}
+#imgMask{position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,.8);display: none;z-index: 999;}
+#imgBox{position: absolute;top: 50%;height: 70%;}
+#imgBox li{height: 100%;display: inline-block;overflow: hidden;}
+#imgBox li img{width: 100%;}
+#sliderBar{position: fixed;left: 0;bottom: 0;width: 100%;height: 5px;overflow: hidden;}
+#sliderBar li{float: left;height: 100%;}
+#sliderBar .active{background: orange;}
+.mui-icon-close{position: fixed;right: 10px;top: 10px;z-index: 1000; color: white;}
+.mui-media-body .txt{font-size: 18px;}
+.mui-detail-mar {padding: 8px 15px 0;background: #fff;}
+.mui-bar-nav {background-color: transparent;}
+.mui-bar-nav.mui-bar .proIcon{position: absolute; margin-right: -10px;margin-left: -10px;padding-right: 5px;padding-left:5px;padding-top: 10px;}
+.mui-bar-nav.mui-bar .proIcon img{width: 25px;height: 25px;}
+.mui-slider .mui-segmented-control .mui-control-item{line-height: 30px; border-right: 1px solid #cbcbcb;}
+#sliderSegmentedControl{padding: 5px 0;}
+.hl-bgc{background: #ededed;}
+.remarks{/*position: absolute;left: 0;*/font-size: 12px;}
+.line-text{position: absolute;left: 73px;}
+.shelves-down-Time{display: inline-block;font-size: 12px; margin-left: 83px;}
+.remarkBox{overflow: hidden;position: relative;}
+#tabBox{width: 100%;margin-bottom: 44px;}
+#tabBox>div{overflow: hidden;width: 100%;}
+#menuTabBox{border-bottom: 1px solid #b2b2b2;background: #fff;}
+#menuTab{overflow: hidden;padding: 8px 0;background: #fff;font-size: 15px;line-height: 25px;}
+#content{overflow: hidden;-webkit-transition: all .3s;-moz-transition: all .3s;-ms-transition: all .3s;-o-transition: all .3s;transition: all .3s;padding: 10px 0;}
+#content li p{color: #000;line-height: 1.8;}
+#menuTab li,#content li{display: inline-block;float: left;}
+#content li{min-height: 200px;padding: 0 10px;}
+#content li img{width: 100%;}
+#menuTab li{border-right: 1px solid #cbcbcb;text-align: center;}
+#menuTab .active{color: #007aff;}
+</style>
+
+</head>
+<body class="hl_mainbg" ng-controller="productDetailCtrl">
+	<!--头部-->
+    <header class="mui-bar mui-bar-nav mui_nav_bg mui-del-bg" style="border-bottom: 0;height: 0;">
+        <a class="proIcon mui-pull-left" href="javascript:;" id="goBackBtn"><img src="../images/product_goBackIcon.png"></a>
+        <h1 class="mui-title"></h1>
+    </header>
+	<!--酒店图片-->
+    <!--<article class="hl_pr_de_img">
+        <img src="{{mapPreImg}}" ng-repeat='mapPreImg in product.mapImg'>
+    </article> <!--{{product.prodImgs}}-->
+    <input type="hidden" id="productId" name="productId" value="{{product.id}}">
+    <input type="hidden" id="prodNo" name="prodNo" value="{{product.prodNo}}">
+    <!--头部产品轮播图-->
+    <div class="mui-slider mui-pic-bs" id='mask-show' style="min-height: 150px;">
+        <div class="mui-slider-group" id="picList">
+            <div class="mui-slider-item" ng-repeat='mapPreImg in product.mapImg'>
+                <a href="#" class="imgBox">
+                    <img ng-src="{{mapPreImg}}"/>
+                </a>
+            </div>
+        </div>
+        <div class="mui-slider-indicator">
+            <div class="mui-indicator mui-active" ></div>
+            <div class="mui-indicator" ng-repeat='nav_bar in nav_bar_num'></div>
+        </div>
+    </div>
+    <!--头部轮播图点击后弹出的详情-->
+    <div id="imgMask">
+        <ul id="imgBox">
+            <li ng-repeat='mapPreImg in product.mapImg'><img ng-src="{{mapPreImg}}"/></li>
+        </ul>
+        <ul id="sliderBar">
+            <li ng-repeat='mapPreImg in product.mapImg'></li>
+        </ul>
+        <span class="mui-icon mui-icon-close" id="closeMask"></span>
+    </div>
+    <div class="mui-media-body mui-detail-mar">
+        <p class="txt" ng-bind='product.prodTitle'></p>
+        <p class="remarkBox"><span class='remarks' ng-bind='product.remarks'></span><!-- <span class="line-text">|</span><span class="shelves-down-Time" ng-bind='product.shelvesDownTime'></span>--></p>
+        <p class="mui-ellipsis hl_hd">￥<cite class="f12" style="margin-right: 5px;" ng-bind='product.frontShowPrice'></cite><em ng-show='product.payScale' ng-bind="product.payScale">0首付</em><em ng-show='product.fundRate' ng-bind='product.fundRate'>0利率</em><em  ng-show='product.procedureRate' ng-bind='product.procedureRate'>0手续费</em><!--<em ng-bind="product.rlList.lossRatio"></em>--></p>
+        <p class="mui-ellipsis hl_yellow"><i class="f12" ng-bind='product.stageNum'></i>期 | ￥<i class="f12" ng-bind="product.paymentMoney"></i>/期</p>
+        <p class="hl_servePromise">
+            <em ng-repeat='servePromisePre in product.servePromise' ng-bind="servePromisePre"></em>
+        </p> 
+        <p class="hl_ReturnLossDescribe">
+            <em ng-repeat='ReturnLossDescribePre in product.ReturnLossDescribe' ng-bind="ReturnLossDescribePre" style="display: block;"></em>
+        </p> 
+    </div>
+    <!--可订日期与价格-->
+    <!--<ul class="mui-table-view mui-table-view-chevron mt10">
+        <li class="mui-table-view-cell mui-media">
+        	<span class="mui-pull-right">
+            	2016-7-9<samp>></samp>
+            </span>
+            <div class="mui-media-body mui-pull-left">
+                <p class="mui-font-bs">选择出行时间</p>
+                <p class="mui-ellipsis mui-font-sm">需出行前<cite>xx</cite>天预订</p>
+            </div>
+        </li>
+    </ul>-->
+	<!--产品编号-->
+    <ul class="mui-table-view mui-table-view-chevron mt10">
+        <li class="mui-table-view-cell mui-media add_cell"><p><span class="items" ng-show='product.prodNo'>产品编号</span><span class="itemsContent" ng-bind='product.prodNo'></span></p></li>
+        <li class="mui-table-view-cell mui-media add_cell" ng-show='product.feature'>
+            <p>
+                <span class="items">产品特色</span>
+                <!--<ul class="itemsContent">
+                    <li ng-repeat='featurePre in product.feature' ng-bind="featurePre"></li>
+                </ul>-->
+                <span class="itemsContent" ng-bind="product.feature"></span>
+            </p>
+        </li>
+        <!--<li class="mui-table-view-cell mui-media add_cell"><p>出游方式<span ng-bind="product.trdclassName"></span></p></li>-->
+        <!--<li class="mui-table-view-cell mui-media"><p>住宿标准<span>宁波十七房开元酒店</span></p></li>-->
+    </ul>
+    <!--详情页-->
+    <div id="tabBox" class="mt10">
+        <!--菜单栏-->
+        <div id="menuTabBox">
+            <ul id="menuTab">
+                <li ng-repeat='preDescribe in describeObj' ng-bind='preDescribe.desKeyName'></li>
+            </ul>
+        </div>
+        <!--内容-->
+        <div id="contentBox">
+            <ul id="content" class="hl-bgc">
+                <li class="hl-bgc" ng-repeat='preDescribe in describeObj'></li>
+            </ul>
+        </div>
+    </div>
+    <!--公共页脚-->
+	<nav class="mui-bar mui-bar-detail-bs hl_productDetail" style="">
+    	<a href="javascript:void(0);" class="mui-tab-item mui-col-xs-5">
+    		<span class="mui-tab-label f8">总额：￥</span>
+    		<span ng-bind='product.frontShowPrice' id="showPrice"></span>
+    	</a>
+        <a href="javascript:void(0);" class="mui-col-xs-2" id="phoneBtn">
+            <span class="" id="span"></span>
+        </a>
+    	<a href="javascript:void(0);" class="mui-col-xs-5" id="my-order" style="background: #31B1FF;">
+    		<span class="mui-tab-label">我要了</span>
+    	</a>
+    </nav>
+    <script src="../js/angular.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/jquery-1.9.1.min.js"></script>
+	<script src="../js/dd.js"></script>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/md5-min.js"></script>
+	<script src="../js/common.js"></script>
+	
+    <script type="text/javascript">
+    	//==================从缓存中获取userid; 
+		var userId,bankId;
+		//判断用户登录状态,如果是已登录,读取
+		if( getLoginStatus() ){
+			//获取用户userId;
+			userId = getLocal("userId")|| getCookie( "userId");
+		}
+		//获取银行卡信息
+        function banklist(){
+            var param = {};
+                param["apiVersion"] = apiVersion;
+                param["devName"] = devName;
+                param["userId"] = userId;
+            //md5加密;
+            param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+            var aRequestData = param ;
+            function aSuccessFunc(res){
+                if(res['state'] == 'S'&&res.data.length>0){
+                    bankId = res.data[0].bankid //银行卡ID
+                }
+            }
+            function aErrorFunc(){
+            	
+            }
+            httpAjax('POST','user/getcard', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);  
+        }
+		
+        banklist();
+        setTimeout(function(){
+            //点击“我要了”按钮触发的判断
+            $('#my-order').click(function (){
+            	function aSuccessFunc(msg){
+      		      //console.log(msg.data.auditState);
+      		      if( msg.data.auditState <= 4) {
+      		    	var btnArray = ['取消', '确认'];
+      		    	mui.confirm(popupTIPS.tips5, '提示', btnArray, function(e) {
+    					if (e.index == 1) {
+    						//跳转至信用点亮页
+    						window.location = "privateCredit.html";
+    					} else {
+    						
+    					}
+    				})
+      		      }else if (msg.data.auditState == 5) {
+    				mui.alert(popupTIPS.tips6);
+      		      }else if (msg.data.auditState == 8) {
+    				mui.alert(popupTIPS.tips7);
+      		      }else if (msg.data.auditState == 9) {
+    				mui.alert(popupTIPS.tips5 ,function(){
+    		    		//补件
+    					window.location = "DataSupplement.html";
+    		    	});
+    		      }else if(bankId == undefined ||  bankId== ''){
+    		    	  var btnArray = ['取消', '确认'];
+        		    	mui.confirm(popupTIPS.tips8, btnArray, function(e) {
+      					if (e.index == 1) {
+      						//跳转至添加银行卡
+      		    		  	window.location = "BankList.html";
+      					} else {
+      						
+      					}
+      				})
+    		      }else{
+      		    	var id = document.getElementById('productId').value;
+      		    	//判断浏览器使用session与cookie
+      		    	if( isSessionStorageSupported() ){
+      		    		setcache("productId",document.getElementById('productId').value);
+          		    	setcache("prodNo",document.getElementById('prodNo').value);
+      		    	}else{
+      		    		setCookie("productId",document.getElementById('productId').value,2);
+      		    		setCookie("prodNo",document.getElementById('prodNo').value,2);
+      		    	}
+      	          	//跳转至分期支付
+      	         	 window.location = "InstallmentPayment.html?orderid=" + id ;
+      		      }
+      		    }
+      		    function aErrorFunc(){
+      		      console.log("未知错误！")
+      		    }
+      		    var aRequestData = "apiVersion=" + apiVersion +"&devName=" + devName + "&userId="+ userId;
+      		    httpAjax('get', 'accuntState', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);  
+            });
+        },500);
+    </script>
+	<script>
+		mui.init({
+			swipeBack: false
+		});
+		//获得slider幻灯片插件对象;
+	    var gallery = mui('.mui-slider');
+	    gallery.slider({
+	        interval:0//自动轮播周期，若为0则不自动播放，默认为0；
+	    });
+	    //图片弹出控制部分
+	    $('#closeMask').click(function(){
+	        $('#imgMask').css({display: 'none'});
+	    });
+	    $('#mask-show').click(function(){
+            $('#imgMask').css({display: 'block'});
+        });
+        $('#imgMask').bind('touchmove',function(){
+            return false;
+        });
+	</script>
+  <script>
+    var describeObj = [//描述
+            {'index':1,'desKeyName': 'desKeyOne','describeName': 'describeOne','describeContent': '0','id': {'firstIdName':'item1mobile','lastIdName':'scroll1'}},
+            {'index':2,'desKeyName': 'desKeyTwo','describeName': 'describeTwo','describeContent': '1','id': {'firstIdName':'item2mobile','lastIdName':'scroll2'}},
+            {'index':3,'desKeyName': 'desKeyThree','describeName': 'describeThree','describeContent': '2','id': {'firstIdName':'item3mobile','lastIdName':'scroll3'}},
+            {'index':4,'desKeyName': 'desKeyFour','describeName': 'describeFour','describeContent': '3','id': {'firstIdName':'item4mobile','lastIdName':'scroll4'}},
+            {'index':5,'desKeyName': 'desKeyFive','describeName': 'describeFive','describeContent': '4','id': {'firstIdName':'item5mobile','lastIdName':'scroll5'}},
+            {'index':6,'desKeyName': 'desKeySix','describeName': 'describeSix','describeContent': '5','id': {'firstIdName':'item6mobile','lastIdName':'scroll6'}},
+            {'index':7,'desKeyName': 'desKeySenven','describeName': 'describeSenven','describeContent': '6','id': {'firstIdName':'item7mobile','lastIdName':'scroll7'}},
+            {'index':8,'desKeyName': 'desKeyEight','describeName': 'describeEight','describeContent': '7','id': {'firstIdName':'item8mobile','lastIdName':'scroll8'}},
+            {'index':9,'desKeyName': 'desKeyNine','describeName': 'describeNine','describeContent': '8','id': {'firstIdName':'item9mobile','lastIdName':'scroll9'}},
+            {'index':10,'desKeyName': 'desKeyTen','describeName': 'describeTen','describeContent': '9','id': {'firstIdName':'item10mobile','lastIdName':'scroll10'}},
+            {'index':11,'desKeyName': 'desKeyEleven','describeName': 'describeEleven','describeContent': '10','id': {'firstIdName':'item11mobile','lastIdName':'scroll11'}}
+        ];//desKey  array
+    var len = 0;//记录nav_bar的个数
+    var currProduct = getUrlParam('id');//获取url参数
+    var app = angular.module('productDetailApp',[]);
+    app.controller("productDetailCtrl",function($scope,$http){
+        $http({method:"GET",
+                url: CONST_SERVER_DOMAIN + "prod/details",//url
+                params:{"id": currProduct},//参数
+                headers:{'Content-Type': 'application/x-www-form-urlencoded'}}).then(
+            function(response){
+                //console.log(response.data.data.prodcutAll);
+                $scope.product = response.data.data.prodcutAll;
+                //价格显示处理 保留2位小数
+                if($scope.product.frontShowPrice < 10000){
+                    $('#showPrice').css({fontSize: '18px'});
+                }else if($scope.product.frontShowPrice < 100000){
+                    $('#showPrice').css({fontSize: '16px'});
+                }else if($scope.product.frontShowPrice < 1000000){
+                    $('#showPrice').css({fontSize: '14px'});
+                }
+                //前端显示金额  保留2位小数
+                $scope.product.frontShowPrice = FormatMoney($scope.product.frontShowPrice, 2);
+                //分期金额  保留2位小数
+                $scope.product.paymentMoney = FormatMoney($scope.product.paymentMoney, 2);
+                //优惠显示与隐藏
+                //$scope.product.noPay = $scope.product.noPay == 1? true:false;
+                //$scope.product.noRate = $scope.product.noRate == 1? true:false;
+                //$scope.product.noCost = $scope.product.noCost == 1? true:false;
+                //只有首付 0利率 0手续费 显示
+                $scope.product.payScale = $scope.product.payScale == '0'? '0首付':($scope.product.payScale+'%首付');
+                $scope.product.fundRate = $scope.product.fundRate == '0'? '0利率': '';
+                $scope.product.procedureRate = $scope.product.procedureRate == '0'? '0手续费':'';
+                $scope.product.feature = $scope.product.feature&&$scope.product.feature.split(';').join(' ');//产品特色
+                //$scope.product.remarks = $scope.product.remarks.split(' ')[0];
+                //$scope.product.shelvesDownTime = '截止日期 '+ $scope.product.shelvesDownTime;
+                $scope.product.servePromise = response.data.data.prodcutAll.servePromise&&response.data.data.prodcutAll.servePromise.split(';');//服务承诺
+                $scope.product.ReturnLossDescribe = response.data.data.ReturnLossDescribe&&response.data.data.ReturnLossDescribe.split(';');//退货损失率描述
+                for(var i=0; i<describeObj.length; i++){
+                    //if($scope.product[describeObj[i]['desKeyName']] === undefined){
+                    //    describeObj.splice(i,describeObj.length-i);//删除剩余不存在的部分
+                    //}else{
+                        describeObj[i]['describeName'] = $scope.product[describeObj[i]['describeName']];
+                        describeObj[i]['desKeyName'] = $scope.product[describeObj[i]['desKeyName']];
+                    //}
+                }
+                /*删除不存在的选项*/
+                for(var i=0; i<describeObj.length; i++){
+                    if(describeObj[i]['desKeyName'] == undefined){
+                        describeObj.splice(i,1);//删除剩余不存在的部分
+                        i--;
+                    }
+                }
+                //$('#content li').eq(0).append($scope.product.describeOne);//描述信息1
+                $scope.describeObj = describeObj;
+                $scope.tabBarStyleWidth = 'width:' + document.documentElement.clientWidth/5 + 'px';
+                var obj = {};
+                for(var i in $scope.product.mapImg){
+                    len++;
+                    obj[len] = len;
+                }
+                delete obj[len];
+                $scope.nav_bar_num = obj;//产品菜单导航栏
+                //产品菜单点击事件
+                $scope.selectMenu = function(num){
+                    console.log(num);
+                };
+                //开始检测渲染完成
+                if(response.data.data.prodcutAll != null) checkCreateComplete();
+            },function(response){
+                //网络错误 停止检测
+                clearInterval(timer);
+            }
+        )
+    });    
+    function tabSliderChange(contentObjId,tabObjId,thisImgIndex){
+        var clientWidth = document.documentElement.offsetWidth||document.body.offsetWidth;
+        var len = $('#'+tabObjId +' li').length;
+        var preTabMenuWidth = len<5?(clientWidth/len):clientWidth/5;
+        $('#'+tabObjId +' li').css({width: preTabMenuWidth});
+        $('#'+tabObjId).css({width: preTabMenuWidth*len});
+        $('#'+contentObjId).css({width: clientWidth*len});//内容宽
+        $('#'+contentObjId +' li').css({width: clientWidth});
+        var pageIndex = thisImgIndex;
+        var prePoxX = pageIndex * clientWidth,endX = 0,endY = 0,moveDis = 0,isTouchMove = false;
+        $('#'+contentObjId).css({transform : 'translate(-' + pageIndex * clientWidth + 'px,0px)'});
+        $('#'+tabObjId + ' .active').removeClass('active');
+        $('#'+tabObjId + ' li').eq(thisImgIndex).addClass('active');
+        //内容滑动
+        /*$('#'+contentObjId).bind('touchstart',function(e){
+            var startX = e.originalEvent.touches[0].clientX;
+            var startY = e.originalEvent.touches[0].clientY;
+            $('#'+contentObjId).bind('touchmove',function(e){
+                isTouchMove = true;
+                endX = e.originalEvent.touches[0].clientX;
+                endY = e.originalEvent.touches[0].clientY;
+                moveDis = prePoxX + startX - endX;
+                if(moveDis <= 0){//范围限定
+                    moveDis = 0;
+                }else if(moveDis >= (len-1)*clientWidth){
+                    moveDis = (len-1)*clientWidth;
+                }
+                $(this).css({transform : 'translate(-' + moveDis + 'px,0px)'});
+                var offsetX = Math.abs(endX - startX);
+                var offsetY = Math.abs(endY - startY);
+                if(offsetY < offsetX){
+                    return false;
+                }
+            });
+            $('#'+contentObjId).bind('touchend',function(e){
+                if(!isTouchMove) return;
+                $('#'+contentObjId).bind('touchmove',null);
+                isTouchMove = false;
+                if((pageIndex*clientWidth - moveDis) > clientWidth/3){//满足切换条件 显示上一页
+                    pageIndex--;
+                }else if((moveDis - pageIndex*clientWidth) > clientWidth/3){//满足切换条件 显示下一页
+                    pageIndex++;
+                }
+                if(pageIndex <= 0){
+                    pageIndex = 0;
+                }
+                if(pageIndex >= len - 1){
+                    pageIndex = len - 1;
+                }
+                //console.log(pageIndex);
+                var transX = pageIndex * clientWidth;
+                prePoxX = transX;
+                $(this).css({transform : 'translate(-' + transX + 'px,0px)'});
+                $('#'+tabObjId + ' .active').removeClass('active');
+                $('#'+tabObjId + ' li').eq(pageIndex).addClass('active');
+            });
+            //return false;
+        });*/
+        //菜单溢出滑动
+        var pageIndex_1 = thisImgIndex;
+        var prePoxX_1 = pageIndex_1 * preTabMenuWidth,endX_1 = 0,moveDis_1 = 0,isTouchMove_1 = false;
+        $('#'+contentObjId).css({height: $('#'+contentObjId + ' li').eq(pageIndex_1).height()+20});
+        $('#'+tabObjId).bind('touchstart',function(e){
+            if(len <= 5) return;//菜单小于5时取消滑动
+            var startX = e.originalEvent.touches[0].clientX;
+            $('#'+tabObjId).bind('touchmove',function(e){
+                isTouchMove_1 = true;
+                endX_1 = e.originalEvent.touches[0].clientX;
+                moveDis_1 = prePoxX_1 + startX - endX_1;
+                if(moveDis_1 <= 0){//范围限定
+                    moveDis_1 = 0;
+                }else if(moveDis_1 >= (len-1)*preTabMenuWidth){
+                    moveDis_1 = (len-1)*preTabMenuWidth;
+                }
+                $(this).css({transform : 'translate(-' + moveDis_1 + 'px,0px)'});
+            });
+            $('#'+tabObjId).bind('touchend',function(e){
+                $('#'+contentObjId).bind('touchmove',null);
+                $('#'+contentObjId).bind('touchend',null);
+                if(!isTouchMove_1) return;
+                isTouchMove = false;
+                pageIndex_1 = Math.floor(moveDis_1/preTabMenuWidth);
+                if(pageIndex_1 <= 0){
+                    pageIndex_1 = 0;
+                }
+                if(pageIndex_1 >= len - 1-4){
+                    pageIndex_1 = len - 1-4;
+                }
+                console.log(pageIndex_1);
+                var transX = pageIndex_1 * preTabMenuWidth;
+                prePoxX_1 = transX;
+                $(this).css({transform : 'translate(-' + transX + 'px,0px)'});
+                //$('#'+tabObjId + ' .active').removeClass('active');
+                //$('#'+tabObjId + ' li').eq(pageIndex).addClass('active');
+            });
+            //return false;
+        });
+    }
+    $('#imgMask').css({height: window.innerHeight});
+    //检测html渲染完成
+    var timer = null;
+    function checkCreateComplete(){
+        timer = setInterval(function(){
+            if($('#menuTab li').length > 0&&$('#content li').length > 0){
+                clearInterval(timer);
+                for(var i=0; i<describeObj.length; i++){
+                    $('#content li').eq(i).append(describeObj[i]['describeName']);//描述信息2....
+                    if(i == 0)$('#content li').eq(i).addClass('active');//第一个为活跃状态
+                }
+                $('#menuTab li').on('click',function(e){
+                   var index = $(this).index();
+                   tabSliderChange('content','menuTab',index);
+                });
+                setTimeout(function(){
+                    tabSliderChange('content','menuTab',0);
+                },500);
+                //$('#content').css({height: $('#menuTab li').eq(0).height()+20});
+                $('#menuTab li').eq($('#menuTab li').length-1).css({border: 'none'});
+            }
+        },200);
+    }
+    //绑定slider轮播图点击事件
+    $('#mask-show .mui-slider-group').bind('click',function(){
+        var nowIndexShow = 0;
+        if($('#mask-show .mui-slider-group .mui-active').index() < 0){
+            nowIndexShow = 0;
+        }else{
+            nowIndexShow = $('#mask-show .mui-slider-group .mui-active').index();
+        }
+        imageSliderChange('imgBox','sliderBar',nowIndexShow,len);
+    });
+    setTimeout(function(){
+        $("#phoneBtn").attr("href", "tel:" + telNumber );
+       /* $('#phoneBtn').click(function(){
+            //拨打电话
+            if(isWeiXin()){
+                window.location.href += "#mp.weixin.qq.com";
+            }
+        });*/
+    },500);
+	//判断返回跳转的位置;
+	var goBackUrl = getUrlParam('goback');
+	//console.log( goBackUrl );
+	$("#goBackBtn").on("click",function(){	
+		if( goBackUrl == "null"){
+			window.location.href = "index.html#mp.weixin.qq.com";
+		}else{
+			window.location.href = "ProductList.html#mp.weixin.qq.com";
+		}
+	})
+  </script>
+</body>
+</html>

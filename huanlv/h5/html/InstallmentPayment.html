@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>分期支付</title>
+  	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+	  <!--标准mui.css-->
+    <link rel="stylesheet" href="../css/mui.min.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="../css/hl_style.css">
+    <link rel="stylesheet" type="text/css" href="../css/InstallmentPayment.css">
+
+<style type="text/css">
+.paymentIcon{position: absolute;width: 40px;height: 40px;margin-left: 10px;margin-top: -2px;}
+.paymentIcon img{position: absolute;width: 25px;height: 25px;}
+.popupbox{width: 0;height: 0;position: static;}
+.popbox{top: 40%;background: none;}
+#paymentBox .content{background-color: rgba(0,0,0,0.8);color: #fff;}
+</style>
+</head>
+<body style="background: #fff;">
+<!--头部-->
+ <header class="mui-bar mui-bar-nav hl_headerSty">
+     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+     <h1 class="mui-title">分期支付</h1>
+ </header>
+
+<!--银行列表-->
+<article>
+
+<div class="staging-details">
+    <div class="sd-list">
+        <div class="st-left">产品名称</div>
+        <div class="st-right" id="prodTitle"> </div>
+    </div>
+    <div class="sd-list">
+        <div class="st-left">产品总额</div>
+        <div class="st-right cf60">￥<span id="marketPrice"> </span></div>
+    </div>
+    <div class="sd-list">
+        <div class="st-left">期数</div>
+        <div class="st-right" id="stageNum"> </div>
+    </div>
+    <div class="sd-list">
+        <div class="st-left">服务费</div>
+        <div class="st-right">￥<span id="lixi"> </span><i class="paymentIcon"><img alt="" src="../images/paymentIcon.png"> </i></div>
+    </div>
+    <div class="sd-list">
+        <div class="st-left">首付金额</div>
+        <div class="st-right">￥<span id="staMoney"> </span></div>
+    </div>
+    <div class="sd-list">
+        <div class="st-left">还款日</div>
+        <div class="st-right" id="staMoneyData"> </div>
+    </div>
+    <div class="sd-list">
+        <div class="st-left">还款银行卡</div>
+        <div class="st-right"><span id="bank"> </span>  (尾号  <font id="bankCardNo"> </font>)</div>
+    </div>
+    
+</div>
+
+
+</article>
+
+<div class="mui-input-group">
+    
+    <div class="mui-input-row">
+        <label>联络人姓名</label>
+        <input type="text" id="realname" class="cb2 checkHasValue" placeholder="默认为注册人姓名（可修改）" value="">
+    </div>
+    <div class="mui-input-row">
+        <label>手机号</label>
+        <input type="number" id="mobile" class="cb2 checkHasValue" placeholder="默认为注册人手机号（可修改）" value="" maxlength="11">
+    </div>
+    <div class="mui-input-row">
+        <label>联系地址</label>
+        <input type="text" id="dormAddress" class="cb2 checkHasValue" placeholder="默认为宿舍地址（可修改）" value="">
+    </div>
+   
+</div>
+<div class="repaymentPlan">
+    <div class="rP-container">
+        <div class="repaymentPlan-tit">还款计划</div>
+        
+        <div id="plan"></div>
+        
+    </div>
+</div>
+<div class="hl_input_row" style="padding: 15px 20px 15px;">
+     <i class="checkedOn hl_agree"></i><a href='agreementService.html' class="hl_bankAgree">同意欢旅金服服务协议</a>
+</div>
+<div class="hl-collapse-content" style="padding: 10px 0;">
+    <input type="button" class="btn" id="paynow" value="确认分期" style="opacity: 1;">
+</div>
+
+<!-- 数字软键盘 -->
+<div class="popup-password" style="display: none;">
+    <div class="bg"></div>
+    <div class="pop-password" style="bottom:-360px;">
+        <div class="psd-tit">输入密码<span class="mui-icon mui-icon-closeempty gg" onclick="classPassBox()"></span></div>
+        <div class="ppd">
+            <form id="password" >
+                <input readonly class="pass" type="password" maxlength="1" value=""><input readonly class="pass" type="password" maxlength="1" value=""><input readonly class="pass" type="password" maxlength="1" value=""><input readonly class="pass" type="password" maxlength="1" value=""><input readonly class="pass" type="password" maxlength="1" value=""><input readonly class="pass pass_right" type="password" maxlength="1" value="">
+            </form>
+        </div>
+        <p class="password_p"><a href="securCodeForget.html">忘记密码？</a></p>
+        <div id="keyboardDIV">
+                <div id="key" style="position:absolute;background-color:#A8A8A8;width:99.5%;bottom:0px;">
+                    <ul id="keyboard" style="font-size:20px;margin:2px -2px 1px 2px">
+                        <li class="symbol"><span class="off">1</span></li>
+                        <li class="symbol"><span class="off">2</span></li>
+                        <li class="symbol btn_number_"><span class="off">3</span></li>
+                        <li class="tab"><span class="off">4</span></li>
+                        <li class="symbol"><span class="off">5</span></li>
+                        <li class="symbol btn_number_"><span class="off">6</span></li>
+                        <li class="tab"><span class="off">7</span></li>
+                        <li class="symbol"><span class="off">8</span></li>
+                        <li class="symbol btn_number_"><span class="off">9</span></li>
+                        <li class="cancle btn_number_"></li>
+                        <li class="symbol"><span class="off">0</span></li>
+                        <li class="delete lastitem"><span class="mui-icon mui-icon-arrowthinleft"></span></li>
+                    </ul>
+                </div>
+          </div>
+    </div>
+</div>
+
+<!-- 密码错误的弹窗提示 -->
+<div id="errorPass" class="popupbox" style="z-index: 200;">
+    <div class="bg"></div>
+    <div class="popbox" style="">
+      <div class="content">密码有误</div>
+      <div class="orc">
+          <div class="cancel">忘记密码</div>
+          <div class="ok">重新输入</div>
+      </div>
+      <div class="justok dn">确认</div>
+    </div>
+</div>
+<!-- 服务费提示 -->
+<div id="paymentBox" class="popupbox" style="z-index: 200;">
+    <div class="popbox">
+      	<div class="content">
+			<div class="staging-details">
+    			<div class="sd-list">
+        			<div class="st-left">手续费</div>
+        			<div class="st-right" id="procedure"> </div>
+    			</div>
+    			<div class="sd-list" style="margin-bottom: 0;">
+        			<div class="st-left">月利率</div>
+        			<div class="st-right" id="fundRate"></div>
+   	 			</div>
+    		</div>
+		</div>
+    </div>
+</div>
+<script src="../js/mui.min.js"></script>
+<script src="../js/angular.min.js" charset="utf-8"></script>
+<script src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/md5-min.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/dd.js"></script>
+<script>
+var cardnoAll = '';
+var bankname = '';
+var bankid = '';
+//判断浏览器是否支持sessionStorage的方法:
+if( isSessionStorageSupported() ){
+	var id = getcache("productId");
+}else{
+	var id = getCookie("productId");
+}
+
+	/**读取缓存数据*/
+	//==================读取本地缓存;判断是否登录;
+	gotologin();
+	//==================从缓存中获取userid; 
+	var userId,tel;
+	//判断用户登录状态,如果是已登录,读取
+	if( getLoginStatus() ){
+		//获取用户userId;
+		userId = getLocal("userId")|| getCookie( "userId");
+		//获取用户电话号码
+		tel = getLoginStatus();
+	}
+	
+	//手机号验证
+	$('#mobile').bind('change',function(){
+	    checkPhone();
+	});
+	function checkPhone(){
+		var usrMp = $("#mobile").val();
+		$("#mobile").val(usrMp);
+	   	if (usrMp.length<11){
+		    mui.alert(popupTIPS.tips44, '提示');
+	        return false;
+	   	}
+	   	if(!reg.test(usrMp)){
+		    mui.alert(popupTIPS.tips38, '提示');
+		    return false;
+	   	}
+	   	return true;
+	}
+	
+  	//获取产品分期信息
+    function productPaymentList(){
+    	var prodNo = id; //获取Id
+    	var param = {};
+    	param["prodId"] = prodNo;
+    	param["userId"] = userId;
+    	//md5加密;
+    	param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+    	
+        var aRequestData = param;
+        function aSuccessFunc(msg){
+        	cardnoAll = msg.data.uv.cardNo; //银行卡号
+        	bankname = msg.data.uv.bankName; //开户银行
+        	bankid = msg.data.uv.bankId; //银行卡ID
+        	$("#prodTitle").html(msg.data.prodcutAll.prodTitle); //产品名称
+        	$("#marketPrice").html(FormatMoney(msg.data.prodcutAll.frontShowPrice,2)); //产品总额
+        	$("#stageNum").html(msg.data.prodcutAll.stageNum + "期"); //期数
+        	$("#lixi").html(FormatMoney(msg.data.prodcutAll.poundage,2)); //服务费
+        	$("#staMoney").html(FormatMoney(msg.data.prodcutAll.firstPay,2)); //首付金额
+        	$("#staMoneyData").html(msg.data.prodcutAll.firstRefundDay); //还款日
+        	$("#bank").html(bankname); //银行卡名称
+        	$("#bankCardNo").html(cardnoAll.substr(cardnoAll.length-4)); //卡号后四位
+        	
+        	$("#procedure").html(msg.data.prodcutAll.procedure); //手续费
+        	$("#fundRate").html(msg.data.prodcutAll.fundRate); //月利率
+        	
+        	//还款计划
+        	var staMoneyData = getcache("staMoneydata");
+        	var stagMoney = getcache("stagMoney");
+        	var plan = getcache("stageNum");
+        	
+        	var str = "";
+            for(var i=0; i < msg.data.mortgageTermList.length; i++ ){
+                str += '<div class="repaymentPlan-c"><div class="repaymentPlan-l">'+ msg.data.mortgageTermList[i].refundDate +'</div><div class="repaymentPlan-r"><span >'+ msg.data.mortgageTermList[i].refundMoney +'</span></div></div>'
+            }
+            $("#plan").html(str);
+        }
+        function aErrorFunc(){
+        	console.log("======未知错误");
+        }
+        httpAjax('POST','prod/stages', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);  
+    }
+	
+    productPaymentList();
+    
+	// 支付密码校验
+	function OrderSecurityCode(){
+	    var param = {};
+	        param["userId"] = userId;
+	        param["tradepwd"] = hex_md5(check_pass_word).toUpperCase();  //MIMA
+	        param["apiVersion"] = apiVersion;
+	        param["devName"] = devName;
+	    //md5加密;
+	    param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+	    
+	    var aRequestData = param ;
+	    function aSuccessFunc(msg){
+	        if(msg.state == "S"){
+	        	payNum();
+	        }
+	        if(msg.state == "000"){
+                $("#errorPass").show();
+                $(".ok").click(function(){
+                    $("#errorPass").hide();
+                     index = 0;
+                    for(var len= 0;len<=passwords.elements.length;len++){
+                        if($(passwords.elements[len]).val()!=''){
+                            $(passwords.elements[len]).val('');
+                        }
+                    }
+                })
+                $(".cancel").click(function(){
+                    window.location.href="securCodeForget.html";
+                })
+	        }
+	    }
+	    function aErrorFunc(data){
+	    	mui.alert( data.msg , '提示' );
+	    }
+	    httpAjax('POST','accounts/validtradepwd', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);  
+	}
+    
+	//提交下单信息
+	function payNum(){
+		var prodId = getcache("prodNo"); //获取prodId
+		var realname = $("#realname").val();
+		var mobile = $("#mobile").val();
+		var dormAddress = $("#dormAddress").val();
+		var actionFlag =  parseInt('0'); //操作类型
+		var param = {};
+		param["userId"] = userId; //获取缓存userId
+		param["prodId"] = prodId;
+		param["bankId"] = bankid;
+		param["bankname"] = bankname;
+		param["cardno"] = cardnoAll;
+		param["realname"] = realname;
+		param["dormAddress"] = dormAddress;
+		param["tradepwd"] = hex_md5(check_pass_word).toUpperCase(); //支付密码MD5加密
+		param["mobile"] = mobile;
+		param["actionFlag"] = actionFlag;
+		param["apiVersion"] = apiVersion;
+		param["devName"] = devName;
+		//md5加密;
+	    param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+		var aRequestData = param ;
+		
+		function aSuccessFunc(orderResp){
+			if(orderResp.state == "S"){
+				window.location.href = "InstalSuccess.html?id=" + id;
+			}
+			if(orderResp.state == "F"){
+	    		mui.alert( orderResp.msg , '提示' ,function(){
+                    $("#errorPass").hide();
+                    index = 0;
+                   for(var len= 0;len<=passwords.elements.length;len++){
+                       if($(passwords.elements[len]).val()!=''){
+                           $(passwords.elements[len]).val('');
+                       }
+                   }
+               });
+	    	}
+		}
+		
+		function aErrorFunc(data){
+			mui.alert( data.msg , '提示' );
+		}
+		//获取基础数据列表;
+		httpAjax("POST", "order/place", aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);
+	}
+	//弹出服务费信息
+	$(".paymentIcon").click(function(){
+		$("#paymentBox").show();
+		setTimeout(function () { 
+			$('#paymentBox').hide();
+		},3000);
+	});
+	//弹出软键盘
+	$("#paynow").click(function(){
+	    if(!$(".hl_agree").hasClass('checkedOn')){
+            //同意欢旅金服支付协议
+            mui.alert(popupTIPS.tips35, '提示');
+            return;
+        }
+        $(".popup-password").show();
+        $(".pop-password").animate({bottom:"0"},200)
+	});
+	
+	$('#goBack').bind('click', function () {
+      window.javatojs.JSWithTypeAndJsonString("2", {});
+    });
+</script>
+<script>
+    $(document).ready(function(){
+        var isCheck = true;
+        $(".hl_agree").click(function(){
+            var selectP = $(".hl_agree");
+            isCheck = !isCheck;
+            if (isCheck) {
+               selectP.removeClass("checkedOff").addClass("checkedOn");
+            } else {
+               selectP.removeClass("checkedOn").addClass("checkedOff");
+            }
+            
+            if(checkComplect()){
+                $('.btn').removeAttr('disabled');
+                $('.btn').removeClass('btn-default');
+            }else{
+                $('.btn').attr('disabled','disabled');
+                $('.btn').addClass('btn-default');
+            }
+        });
+        function checkComplect(){
+            var isComtected = true;
+            if(!$('.hl_agree').hasClass('checkedOn')){
+                isComtected = false;
+            }
+            return isComtected;
+        }
+    });
+</script>
+</body>
+</html>

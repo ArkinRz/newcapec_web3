@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="apple-mobile-web-app-title" content="欢旅金融登录">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>设置安全码</title>
+<!-- APP自用CSS -->
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/hl_style.css">
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+</head>
+<body class="hl_mainbg">
+<header class="mui-bar mui-bar-nav hl_headerSty">
+   <a class="mui-icon mui-icon-left-nav mui-pull-left" href="privateCreLight.html"></a>
+   <h1 class="mui-title">设置安全码</h1>
+</header>
+<!-- 占位 -->
+<section class="mt50"><p class="hl_bespeakTips1"></p></section>
+<div class="hl-collapse-content">
+  	<div class="hl_input_group">
+		<div class="hl_input_row">
+			<input type="password" id="securCodeFi" pattern="[0-9]*" inputmode="numeric" placeholder="输入六位数字" maxlength="6">
+			<!-- <i class="hl_label_pasw" id="hl_label_pasw1"></i> -->
+		</div>
+		<div class="hl_input_row">
+			<input type="password" id="securCodeSe" pattern="[0-9]*" inputmode="numeric"  placeholder="再次输入" maxlength="6">
+			<!-- <i class="hl_label_pasw" id="hl_label_pasw2"></i> -->
+		</div>
+	</div>
+	<input id="securSub" type="submit" class="btn" value="提交">
+</div>
+<!--图片解析弹窗-->
+<div id="tipsBox">
+    <div>
+        <img src="../images/loading_big.gif"/>
+        <p id="tipsText" style="visibility: hidden;">识别中,请稍后!</p>
+    </div>
+</div>
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/md5-min.js"></script>
+<script src="../js/common.js"></script>
+<script>
+	mui.init({
+		swipeBack:true //启用右滑关闭功能
+	});
+
+//==================读取本地缓存;判断是否登录;
+gotologin('flag');//传入参数 表示登录后页面不跳转直接进入'我的'
+//==================从缓存中获取userid, moblie; 
+var mobile, userId;
+//判断用户登录状态,如果是已登录,读取
+if( getLoginStatus() ){
+	//获取用户userId, mobile;
+	userId = getLocal("userId")|| getCookie( "userId");
+	//获取用户手机号;
+	mobile = getLoginStatus();
+}
+
+//输入框只能是数字；
+$("#securCodeFi").numeral();
+$("#securCodeSe").numeral();
+/* 
+//显示密码框类型
+$('#hl_label_pasw1').click(function(){
+	var pass=document.getElementById("securCodeFi");
+	if($(this).hasClass('hl_label_paswact')){
+		$(this).removeClass('hl_label_paswact');
+		pass.type="password";
+	}else{
+		$(this).addClass('hl_label_paswact');
+		pass.type="tel";
+	}
+})
+$("#hl_label_pasw2").click(function(){
+	var pass1=document.getElementById("securCodeSe");
+	if($(this).hasClass('hl_label_paswact')){
+		$(this).removeClass('hl_label_paswact');
+		pass1.type="password";
+	}else{
+		$(this).addClass('hl_label_paswact');
+		pass1.type="tel";
+	}
+}) */
+/**
+ * 安全码格式验证
+ */
+function checkSecurCode(){
+	var securCodeFi = $("#securCodeFi").val();
+    var securCodeSe = $("#securCodeSe").val();
+    if (securCodeFi == null || securCodeFi == '')
+    {
+ 	    mui.alert(popupTIPS.tips48);
+        return false;
+    }
+    if(!payPwdVaildate(securCodeFi)){
+   	 	mui.alert(popupTIPS.tips52);
+        return false;
+   	}
+    if(securCodeSe == "") {
+		mui.alert(popupTIPS.tips48);
+	    return false;
+	}
+	if(securCodeFi != securCodeSe) {
+		mui.alert(popupTIPS.tips51);
+	    return false;
+	}	
+	return true;
+}
+function payPwdVaildate(str){
+    var pattern = /^[0-9]{6}$/; 
+    return pattern.test(str); 
+}
+
+
+/**
+ * 设置安全码方法封装;
+ */
+function securCode(){
+	if(!checkSecurCode()){
+		return false;
+	}
+	var securCodeFi = $("#securCodeFi").val();
+	securCodeFi = hex_md5(securCodeFi).toUpperCase();
+	var param = {};
+	param["userId"] = userId;
+	param["tradepwd"] = securCodeFi;
+	param["apiVersion"] = apiVersion;
+	param["devName"] = devName;
+	//md5加密;
+	param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+	//Ajax请求响应
+	var aRequestData = param ;
+    function aSuccessFunc(data){
+        $('#tipsBox').css({'display': 'none'});   
+    	if( data.state == "S"){
+			mui.alert( data.msg,function(){
+				window.location.href = "privateCreLight.html" ;
+			});
+		}
+    	if(data.state == "F"){
+    		mui.alert( data.msg );
+    	}
+    }
+    function aErrorFunc(){
+        $('#tipsBox').css({'display': 'none'});   
+    	mui.alert(popupTIPS.tips46);
+        return;
+    }
+    $('#tipsBox').css({'display': 'block'});
+	httpAjax('POST','accounts/tradepassword', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);
+}
+
+/**
+ * 找回安全码方法封装;
+ */
+var picNumber = getcache("picNumber") || getCookie( "picNumber");
+var picCode = getcache("pngCodeValue") || getCookie( "pngCodeValue");
+var smsCode = getcache("phoneCodeValue") || getCookie( "phoneCodeValue");
+var cardNumber = getcache("idCardValue") || getCookie( "idCardValue");
+
+function forgetSecurCode(){
+	if(!checkSecurCode()){
+		return false;
+	}
+	
+	var securCode = $("#securCodeFi").val();
+	securCode = hex_md5(securCode).toUpperCase();
+	
+	var param = {};
+	param["mobile"] = mobile;        //写死测试 mobile18217476867
+	param["sessionId"] = picNumber;
+	param["picCode"] = picCode;
+	param["smsCode"] = smsCode;
+	param["userId"] = userId;          //写死测试 userId"001300001"
+	param["tradepwd"] = securCode;
+	param["apiVersion"] = apiVersion;
+	param["devName"] = devName;
+	param["cardNumber"] = cardNumber;
+	//md5加密;
+	param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+	
+    var aRequestData = param;
+	
+   	function aSuccessFunc(data){
+   		console.log(data)
+   		$('#tipsBox').css({'display': 'none'});
+    	if( data.state == "S"){
+			//mui.alert( data.msg , '提示' );
+			window.location.href = "ProductDetail.html";
+		}
+    	if(data.state == "F"){
+    		mui.alert( data.msg );
+    	}
+   	 }
+    function aErrorFunc(){
+        $('#tipsBox').css({'display': 'none'});
+    	mui.alert(popupTIPS.tips46);
+        return;
+    }
+    $('#tipsBox').css({'display': 'block'});
+	httpAjax('POST','accounts/foundpassword', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);
+}
+
+
+window.onload = function(){
+	var osendPhoneCode =$("#securSub");
+    osendPhoneCode.click(function(){
+		
+		//根据缓存中读到的身份证CardValue,判断要调用的方法;
+		if( cardNumber ){
+			//找回安全码;
+			forgetSecurCode();
+		}else{
+			//设置安全码;
+    		securCode();
+		}
+		
+    });
+}
+</script>
+</body>
+</html>

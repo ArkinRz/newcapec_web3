@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='baseDataApp'>
+<head>
+    <meta charset="utf-8">
+    <title>信息补件</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="../css/mui.min.css">
+    <!--App自定义的css-->
+    <!-- <link rel="stylesheet" type="text/css" href="../css/app.css"> -->
+
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="../css/hl_style.css">
+    <link rel="stylesheet" type="text/css" href="../css/ArkinStylesheet.css">
+    <link rel="stylesheet" type="text/css" href="../css/initialMessage.css">
+</head>
+	<body>
+	      <!--头部-->
+        <header class="mui-bar mui-bar-nav hl_headerSty">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">信息补件</h1>
+        </header>
+	    <div class="basdata">
+          <form class="mui-input-group arkin">
+            <div class="mui-input-row pdr0 arkin1">
+                <label>姓名</label>
+                <input type="text" class="tr cb2" placeholder="请输入姓名">
+            </div>
+            <div class="mui-input-row pdr0 arkin1">
+                <label>性别</label>
+                <div class="sexck" id='sexC'>
+                  <span class="sex sex1 selectIt">男</span>
+                  <span class="sex sex2">女</span>
+                </div>
+            </div>
+            <div class="mui-input-row pdr0 arkin1" style="position:relative;" id="arkInputBox-1">
+                <label>出生日期</label>
+                <input type="date" class="tr cb2 inputBar" value="1990-01-01">
+                <input type="text" class="inputLy cb2" value="1990-01-01" id="birthDate">
+            </div>
+            <div class="mui-input-row pdr0 arkin1 add">
+                <label>身份证地址</label>
+                <textarea class="tr cb2 ttra" name="" id="" cols="30" rows="2" placeholder="请输入身份证地址"></textarea>
+            </div>
+        </form>
+        <form class="mui-input-group arkin2 mrt30">  
+            <ul class="mui-table-view">
+              <li class="mui-table-view-cell">
+                <a class="mui-navigate-right js-zxd">有无助学贷款</a>
+              </li>         
+            </ul>          
+        </form>
+        <div class="zxd">
+          <div class="bg"></div>
+          <div class="xz" id="stuLoanFlag">
+            <div class="xz-tit"><span class="zuo">关闭</span><span class="you sure">完成</span></div>
+            <div class="top selectIt">无</div>
+            <div class="down">有</div>
+          </div>
+        </div>
+    <script src="../js/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+      $(function(){
+        $(".js-zxd").click(function(){
+          $(".zxd").fadeIn(200);
+        })
+        $(".bg").click(function(){
+          $(".zxd").fadeOut(200);
+        })
+        $(".zuo").click(function(){
+          $(".zxd").fadeOut(200);
+        })
+        $(".top").click(function(){
+          $(this).addClass("selectIt");
+          $(".down").removeClass("selectIt");
+        })
+    
+        $(".down").click(function(){
+          $(this).addClass("selectIt");
+          $(".top").removeClass("selectIt");
+        })
+    
+        $(".sure").click(function(){
+          $(".zxd").fadeOut(200);
+    
+        })
+    
+        $(".sex1").click(function(){
+          $(this).addClass("selectIt");
+          $(".sex2").removeClass("selectIt");
+        })
+    
+        $(".sex2").click(function(){
+          $(this).addClass("selectIt");
+          $(".sex1").removeClass("selectIt");
+        })
+        $('#arkInputBox-1 input')[0].onchange = function(){
+            $('#arkInputBox-1 input')[1].value = $('#arkInputBox-1 input')[0].value;
+        }
+      })
+    </script>
+    <script src="../js/mui.min.js"></script>
+	</body>
+</html>

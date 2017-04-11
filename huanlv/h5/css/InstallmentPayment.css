@@ -1,0 +1,130 @@
+@charset "utf-8";
+/* CSS Document */
+article{
+    width: 90%;
+    margin: 65px auto 20px;
+    overflow: hidden;
+}
+
+
+
+
+
+
+
+.staging-details{
+    font-size: 14px;
+}
+
+.sd-list{
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.sd-list .st-left{
+    float: left;
+    width: 35%;
+}
+
+.sd-list .st-right{
+    float: left;
+    width: 65%;
+}
+
+.cf60{
+    color: #f60;
+}
+
+.mui-input-group{
+    font-size: 14px;
+}
+
+.repaymentPlan{
+    width: 100%;
+    overflow: hidden;
+    background-color: #F6F6F6;
+
+}
+.hl_input_row,.hl-collapse-content{
+    background-color: #F6F6F6;
+}
+.rP-container{
+    width: 90%;
+    margin: 0 auto;
+}
+
+.repaymentPlan-tit{
+    line-height: 45px;
+    border-bottom: 1px solid #eaeaea;
+    font-size: 16px;
+}
+
+.repaymentPlan-c{
+    font-size: 14px;
+    line-height: 28px;
+    overflow: hidden;
+}
+
+.repaymentPlan-c .repaymentPlan-l{
+    float: left;
+    width: 60%;
+}
+
+.repaymentPlan-c .repaymentPlan-r{
+    float: left;
+    
+}
+
+.protocol{
+    color: #31B1FF;
+    margin: 20px 5% 10px;
+}
+
+.protocol input{
+    width: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*.paynow{
+    width: 90%;
+    margin: 20px 5%;
+    background-color: #31b1ff;
+    text-align: center;
+    line-height: 45px;
+    clear: both;
+    font-size: 18px;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.paynow:active{
+    background-color: #007aff;
+}*/
+/*.btn-default {
+    background-color: #d3d3d3;
+}
+.btn {
+    background-color: #31b1ff;
+    text-align: center;
+    padding: 8px 0;
+    margin: 0 5%;
+    width: 90%;
+    color: #fff;
+    display: inline-block;
+    border-radius: 5px;
+    font-size: 20px;
+    border: 0;
+    margin: 20px 5%;
+}*/

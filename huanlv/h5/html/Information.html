@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>学籍信息页</title>
+  	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="Expires" content="-1">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Pragma" content="no-cache">
+	<!--标准mui.css-->
+    <link rel="stylesheet" href="../css/mui.min.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="../css/hl_style.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <script src="../js/jquery-1.9.1.min.js"></script>
+    <style type="text/css">
+    .hl-student-img, .img-bg {
+        text-indent: 0px; 
+        left: 9px;
+    }
+    .mui-table-view.mui-grid-view .mui-table-view-cell{
+    	margin-right: 0px; 
+        padding: 10px 0 0 10px;
+    }
+    .img-bg {
+        opacity: 0;
+    }
+    </style>
+</head>
+
+<body>
+	<!--头部-->
+    <header class="mui-bar mui-bar-nav mui_nav_bg">
+        <a class="mui-icon mui-icon-left-nav mui-pull-left" href="privateCreLight.html"></a>
+        <h1 class="mui-title">学籍信息</h1>
+    </header>
+    <!--图文混排-->
+    <ul class="mui-table-view mui-grid-view mt50 mui-came mb50">
+        <li class="mui-table-view-cell mui-media mui-col-xs-6" id="img-box-1">
+        	<span class="hl-student" id="hl-student">点击拍摄学生证封面</span>
+        	<img src="" id="images-1" class="img-bg"/>
+            <input type="file" accept="image/*" capture="camera" onfocus="this.blur()" value="" class="hl-student-img">
+        </li>
+        <li class="mui-table-view-cell mui-media mui-col-xs-6" id="img-box-2">
+        	<span class="hl-student-infro" id="hl-student-infro">点击拍摄学生证信息页</span>
+            <img src="" id="images-2" class="img-bg" />
+            <input type="file" accept="image/*" capture="camera" onfocus="this.blur()" value="" class="hl-student-img">
+        </li>
+        <li class="mui-table-view-cell mui-media mui-col-xs-6" id="img-box-3">
+        	<span class="hl-student-reg" id="hl-student-reg">点击拍摄学生证注册页</span>
+            <img src="" id="images-3" class="img-bg" />
+            <input type="file" accept="image/*" capture="camera" onfocus="this.blur()" value="" class="hl-student-img">
+        </li>
+        <li class="mui-table-view-cell mui-media mui-col-xs-6" id="img-box-4">
+        	<span class="hl-student-infro-hand" id="hl-student-infro-hand">点击拍摄手持学生证信息页</span>
+            <img src="" id="images-4" class="img-bg" />
+            <input type="file" accept="image/*" capture="camera" onfocus="this.blur()" value="" class="hl-student-img">
+        </li>
+    </ul>
+    
+    <div class="hl_btn hl_infro">
+    	<!--<button class="btn btn_blue">下一步</button>-->
+        <a href="javascript:void(0)" class="btn btn_blue" id="next">下一步</a> <!--privateCreLight.html-->
+    </div>
+    <!--loading-->
+    <div id="tipsBox">
+        <div>
+            <img src="../images/loading_big.gif"/>
+            <p id="tipsText" style="visibility: hidden;">短信验证中,请稍后!</p>
+        </div>
+    </div>
+    <!--jquery类库-->
+    <script src="../js/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <!--mui自带类库-->
+    <script type="text/javascript" src="../js/mui.min.js"></script>
+    <!--公共方法类库-->
+    <script src="../js/common.js" type="text/javascript" charset="utf-8"></script>   
+    <!--MD5加密类库-->
+    <script src="../js/md5-min.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+		//==================读取本地缓存;判断是否登录;
+		gotologin('flag');//传入参数 表示登录后页面不跳转直接进入'我的'
+		
+    	var fileObjArray = new Array(4);
+	    var fileKeyName = ['stucoversimg','cardimgPos','stupageimg','handCardimg'];
+	    var nowIndex = 0;
+	    $('.mui-media').on('touchstart',function(){
+	    	nowIndex = $(this).index();
+	    });
+		$('.hl-student-img').bind('change', function (e){
+		    var file = e.target.files[0];
+		    var _this = this;
+		    if (file && /^image\//i.test(file.type)) {		
+		        var reader = new FileReader();			
+		        reader.onloadend = function () {
+		            // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
+		            var dataURL = reader.result;
+		            var img = new Image();
+		            img.onload = function(){
+		            	var canvasDataURL = dataURL;
+                        // 当图片大于2M时, 就宽度压缩成 900px, 高度按比例计算
+                        // 压缩质量可以根据实际情况调整
+                        if(file.size >= 2*1000*1000){
+                            var w = Math.min(900, img.width);
+                            var h = img.height * (w / img.width);
+                            var canvas = document.createElement('canvas');
+                            var ctx = canvas.getContext('2d');                      
+                            // 设置 canvas 的宽度和高度
+                            canvas.width = w;
+                            canvas.height = h;                      
+                            // 把图片绘制到 canvas 中
+                            ctx.drawImage(img, 0, 0, w, h);                     
+                            // 取出 base64 格式数据
+                            canvasDataURL = canvas.toDataURL('image/jpeg',0.7); 
+                        }
+                        var fileName = fileKeyName[nowIndex];
+                        var data = dataURIToOBJ(fileName,canvasDataURL);
+                        fileObjArray.splice(nowIndex,1,data);
+                        //console.log(data);
+					    $('.img-bg').eq(nowIndex).attr("src", canvasDataURL);
+					    $('.img-bg').eq(nowIndex).css({opacity: 1});
+					    $('#tipsBox').css({'display': 'none'});
+		            }
+		            img.src = dataURL;
+		            // 插入到 DOM 中预览
+		            // ...
+		            //document.body.appendChild(img);
+		        };			
+		        // 读出base64格式
+		        reader.readAsDataURL(file);
+		        $('#tipsBox').css({'display': 'block'});
+		    }
+		});
+		//直接读取canvas数据
+        function canvasToData(canvasObj,fileName){                     
+            // 取出 base64 格式数据
+            var canvasDataURL = canvasObj.toDataURL('image/jpeg',0.9); 
+            var data = dataURIToOBJ(fileName,canvasDataURL);
+            return data;
+        }
+        function dataURIToOBJ(fileName,dataURI){//URL数据转存处理
+            var dataString = dataURI.split(',')[1];
+            var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            var obj = {};
+            obj.name = fileName + (mimeString == 'image/jpeg'?'.jpg':'.png');
+            obj.type = mimeString;
+            obj.data = encodeURIComponent(dataString);//安全起见 编码
+            return {'keyName': fileName, 'data': obj};
+        }
+		function sendImgToServer(url,fileDataArray,parameterObj,callBack){//发送图片到服务器
+            var fd = new FormData();
+            var param = {};
+            for(var i in parameterObj){
+                param[i]= parameterObj[i];
+            }
+            param['md5Sign'] = hex_md5(md5seri(param)).toUpperCase();//MD5加密
+            for(var i in param){
+                fd.append(i, param[i]);
+            }
+            for(var i=0; i<fileDataArray.length; i++){
+                fd.append(fileDataArray[i]['keyName'], JSON.stringify(fileDataArray[i]['data']));
+            }
+            $.ajax({
+                type: 'POST',
+                url: CONST_SERVER_DOMAIN + url,
+                data: fd,
+                processData: false,
+                contentType: false,
+                xhr: function() {
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener("progress", function(evt) {
+                        if (evt.lengthComputable) {
+                            var percentComplete = evt.loaded / evt.total;
+                            //console.log('进度', percentComplete);
+                        }
+                    }, false);
+                    return xhr;
+                }
+            }).success(function (res) {
+                //console.log(res);
+                callBack&&callBack(res);
+            }).error(function (err) {
+                isFirstClick = true;
+                $('#tipsBox').css({'display': 'none'});
+                mui.alert('网络超时，请重试！');
+                //console.error(err);
+            });
+        }
+		var isFirstClick = true;//防止多次点击
+		$('#next').click(function(){
+		    if(!isFirstClick) return;
+			for(var i=0; i<fileObjArray.length; i++){
+				if(fileObjArray[i] === undefined){
+					mui.alert(popupTIPS.tips22);
+					return;
+				}
+			}
+			$('#tipsBox').css({'display': 'block'});
+//			$('#tipsBox').bind('touchstart',function(e){
+//			    return false;
+//			});
+            isFirstClick = false;
+			var data = {userId: getLocal("userId")|| getCookie( "userId")};//
+			sendImgToServer('base/saveUserStudent',fileObjArray,data,callBack);
+		});
+		function callBack(res){
+			var obj = JSON.parse(res);
+			//console.log(obj);
+			if(obj['state'] == 'S'){//成功,页面跳转
+			    isFirstClick = true;
+			    mui.alert(obj['msg'],'提示');
+			    $('#tipsBox').css({'display': 'none'});
+				window.location = 'privateCreLight.html';
+			}else if(obj['state'] == 'F'){//失败
+			    isFirstClick = true;
+                $('#tipsBox').css({'display': 'none'});
+                mui.alert(obj['msg'],'提示');
+            }
+		}
+		$('#tipsBox').bind('touchmove',function(){
+            return false;
+        });
+    </script>  
+    
+</body>
+</html>

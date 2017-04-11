@@ -1,0 +1,73 @@
+@charset "utf-8";
+/* CSS Document */
+article{
+    width: 90%;
+    margin:65px auto 0;
+}
+
+.order{
+    /*width: 88%;*/
+    /*float: left;*/
+    /*padding: 10px 20px;*/
+    width: 100%;
+    padding: 15px 0 15px 0;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.order-tit{
+    font-size: 18px;
+    /*font-weight: 600;*/
+    font-family: SimHei;
+}
+
+.time{
+    color: #b2b2b2;
+}
+
+.price{
+    color: #f60;
+}
+
+.price-t {
+    position: relative;
+}
+
+.price-t img{
+    height: 14px;
+    position: absolute;
+    left: 50px;
+    top: 3px;
+}
+
+.price-b{
+    color: #ffbc00;
+}
+
+.price-t p,.price-b p{
+    display: inline;
+    color: #f60;
+}
+
+.price-b p{
+    color: #ffbc00;
+}
+
+.price-b span{
+    float: right;
+    color: #005cff;
+    font-size: 16px;
+    font-family: SimHei;
+
+}
+
+.order-b{
+    margin-top: 20px;
+    font-size: 16px;
+    color: #b2b2b2;
+    line-height: 28px;
+}
+
+.order-b ul li span{
+    margin-left: 20px;
+    color: #333;
+}

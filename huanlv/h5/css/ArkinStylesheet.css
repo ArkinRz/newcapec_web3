@@ -1,0 +1,318 @@
+@charset "utf-8";
+/* CSS Document */
+.basdata{
+    /*width: 90%;*/
+    margin: 60px auto 0;
+    overflow: hidden;
+    font-size: 14px;
+}
+
+.mui-input-group .mui-input-row{
+    height: 45px;
+}
+
+.mui-input-row label{
+    padding:15px 15px;
+}
+
+.basdata input{
+    height: auto;
+    padding:12px 15px;
+}
+
+.basdata input,.basdata textarea{
+    color: #333;
+}
+
+.basdata .arkin input,.basdata .arkin textarea{
+    color: #b2b2b2;
+}
+
+.tr{
+    text-align: right;
+}
+
+.arkin{
+    background-color: #f6f6f6;
+    /*border-bottom: 1px solid #999;*/
+}
+
+.arkin:before{
+    background-color: #f6f6f6;
+}
+
+.akbefore:before{
+    background-color: #fff;
+}
+
+
+.arkin:after{
+    /*background-color: #f6f6f6;*/
+}
+
+.arkin .arkin1:after{
+    background-color: #f6f6f6;
+}
+
+.arkin .arkin1{
+    height: 30px;
+}
+
+.cb2{
+    color: #b2b2b2;
+}
+
+.arkin .arkin1 .ttra{
+    width: 50%;
+    margin: 10px 15px;
+    overflow: hidden;
+    padding: 8px 0;
+    text-align: left;
+}
+
+.arkin .add{
+ height: 90px;
+}
+
+.arkin2 .arkin3 .ttra {
+    width: 60%;
+    margin: 10px 15px 0 0;
+    overflow: hidden;
+}
+
+.arkin2 .address{
+    height: 70px;
+}
+
+.pdr0 label {
+    padding-right: 0;
+}
+
+.mrt30{
+    margin-top: 30px;
+}
+
+.card{
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    text-align: center;
+    background-color: #f6f6f6;
+}
+#hl-cvs{
+    background-color: #dadada;
+}
+.btn-next{
+    margin: 20px 5%;
+    line-height: 45px;
+    color: #fff;
+    text-align: center;
+    background-color: #31b1ff;
+    border-radius: 5px;
+	display: inline-block;
+	width: 90%;
+}
+
+.btn-next:active{
+    background-color: #1da9ef;
+}
+
+.zxd{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 11;
+    font-size: 14px;
+    display: none;
+}
+
+.xz{
+    position: fixed;
+    bottom: 0;
+    height: 119px;
+    width: 100%;
+    background-color: #fff;
+}
+
+.xz-tit{
+    height: 45px;
+    width: 100%;
+    line-height: 45px;
+    background-color: #eaeaea;
+    color: #60c3ef;
+}
+.top{
+    width: 80%;
+    line-height: 36px;
+    margin: 0 auto;
+    text-align: center;
+    border-bottom: 1px solid #b1b1b1;
+}
+.down{
+    width: 80%;
+    line-height: 36px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.zuo{
+    float: left;
+    margin-left: 15px;
+}
+
+.you{
+    float: right;
+    margin-right: 15px;
+}
+
+
+.selectIt{
+    color: #60c3ef;
+}
+
+.sex{
+    display: inline-block;
+    padding-left: 10px;
+}
+
+.sexck{
+    line-height: 1.1;
+    padding: 11px 15px;
+    float: right;
+    color: #b2b2b2;
+}
+
+.draw{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    /*display: none;*/
+    opacity: 0;
+    z-index: -1;
+}
+.draw .draw-name{
+    width: 90%;
+    margin:0 auto;
+    position: absolute;
+    left: 5%;
+    top: 150px;
+}
+
+.draw-tit{
+    height: 45px;
+    line-height: 45px;
+    background-color: #eaeaea;
+    text-align: center;
+    position: relative;
+}
+
+.draw-tit span{
+    color: #60c3ef;
+}
+
+.draw-tit .draw-clean{
+    position: absolute;
+    left: 15px;
+}
+
+.draw-tit .draw-close{
+    position: absolute;
+    right: 15px;
+}
+.inputBar{
+    position: absolute;
+    right: 0;
+    -webkit-opacity: 0;
+    opacity: 0;
+}
+.inputLy{
+    width: 65%;
+    height: 100%;
+    text-align: right;
+}
+.hl-relation{
+    padding: 12px 0px;
+    position: relative;
+    display: inline-block;
+    width: 20%;
+}
+.hl-relation a{
+    color: #b1b0b1;
+}
+.relation-box{
+   position: relative; 
+}
+.relation-box .relationName{
+    position: absolute;
+    right: 0;
+    width: 42%;
+    /*color: rgb(178, 178, 178);*/
+}
+.relation-box .line,.arkin3 .line{
+    display: inline-block;
+    position: absolute;
+    width: 1px;
+    height: 50%;
+    /*padding: 10px 15px;*/
+    top: 25%;
+    border-left: 1px solid #b1b0b1;
+}
+.hl-relat{
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 11;
+    font-size: 14px;
+}
+.relat-box{
+   /*display: none;*/
+    height: 120px;
+    
+}
+.relat-box a{
+    display: block;
+    width: 80%;
+    line-height: 36px;
+    margin: 0 auto;
+    text-align: center;
+}
+.relat-box .relat-bottom-line{
+    border-bottom: 1px solid #b1b1b1;
+}
+.xz-tit{
+    height: 45px;
+    width: 100%;
+    line-height: 45px;
+    background-color: #eaeaea;
+    color: #60c3ef;
+}
+.relat-contentBox{
+    /*height: 110px;*/
+    height: 74px;
+    overflow-y: scroll;
+}
+.scroll-box{
+    height: 74px;
+}
+.arkin3 .phonePreStyle{
+    width: 16%;
+    float: left;
+}
+.arkin3 .phoneStyle{
+    width: 40%;
+    float: right;
+}
+input{
+    color: rgb(178, 178, 178);
+}
+.mui-popup {
+    position: fixed;
+}
+.add_bottom{border-bottom: 1px solid #b2b2b2;}

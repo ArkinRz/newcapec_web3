@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>成功-下订单</title>
+<!-- APP自用CSS -->
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/hl_style.css">
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+<style type="text/css">
+.mg-20{margin: 20px;}
+</style>
+</head>
+<body class="hl_mainbg">
+<header class="mui-bar mui-bar-nav hl_headerSty">
+   <h1 class="mui-title">提示</h1>
+</header>
+<div id="error" align="center" class="ma-0">
+	<img alt="" class="errorGIF" src="../images/dataSuccess.png">
+	<p class="mg-3"></p>
+	<p class="hl_black33 f9 mg-20">  &nbsp;&nbsp;您购买的产品已通过审核,我们的工作人员会尽快联系您确定行程，请保持手机通话畅通!</p>
+</div>
+<div class="hl_infobtn hl_btn">
+	<input id="submit" type="submit" class="btn btn_blue" value="我知道了">
+</div>
+<script src="../js/angular.min.js" type="text/javascript" charset="utf-8"></script>	
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/common.js"></script>
+
+<script type="text/javascript">
+ 	$(document).ready(function(){
+		var heightChange = $(window).height()/2-140;
+		var heightBottom = $(window).height()/4-80;
+		document.getElementById('error').style.marginTop= heightChange+"px";
+		document.getElementById('error').style.marginBottom= heightBottom+"px";
+	});
+ 	var Id = getUrlParam('id');//获取url参数
+ 	$("#submit").click(function(){
+ 		window.location.href="ProductDetail.html?id="+Id;
+	})
+</script>
+</body>
+</html>

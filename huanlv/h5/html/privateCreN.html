@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>个人信用</title>
+<!-- APP自用CSS -->
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/hl_style.css">
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+</head>
+<body class="hl_mainbg">
+<header class="mui-bar mui-bar-nav hl_headerSty">
+   <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+   <h1 class="mui-title">个人信用</h1>
+</header>
+<div id="error" align="center">
+	<p class="hl_gray22 f11">即将推出，敬请期待！</p>
+</div>
+<script src="../js/jquery-1.9.1.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+ 	$(document).ready(function(){
+		var heightChange = $(window).height()/2-30;
+		document.getElementById('error').style.marginTop= heightChange+"px";
+	});
+</script>
+</body>
+</html>

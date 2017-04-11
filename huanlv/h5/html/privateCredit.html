@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no" />
+<title>信用</title>
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+<!-- APP自用CSS -->
+<link rel="stylesheet" href="../css/hl_style.css">
+<link rel="stylesheet" href="../css/main.css">
+</head>
+<body class="hl_mainbg">
+<header class="mui-bar mui-bar-nav hl_headerSty">
+   <a class="mui-icon mui-icon-left-nav mui-pull-left" id="goBackBtn"></a>
+   <h1 class="mui-title">信用</h1>
+</header>
+<div class="hl_personCredit mt44">
+	<section class="hl_bespeakTips"></section>
+	<p class="f12 hl_black33 fb">征信额度 <span class="ml20 hl_orange" id="creditlimit">-</span></p>
+	<p class="f10 hl_gray22">请完善基础资料和个人信用以提升额度</p>
+</div>
+<div class="hl_person_content">
+	<ul class="mui-table-view">
+		 <!-- <li class="mui-table-view-cell">
+		 	<a class="mui-navigate-right" href="initialMessage.html"><i class="hl_person"><img src="../images/hl_icon.png"></i>基础资料 <span class="hl_gray22 f8">(<span id="getUserMode">未认证</span>)</span></a>
+		 </li> -->
+         <li class="mui-table-view-cell personInformation">
+         	<div class="mui-navigate-right"><i class="hl_person"><img src="../images/hl_icon1.png"></i>个人信用&nbsp;<span class="hl_gray22 f8">(<span id="getUserMode">1</span>)</span></div>
+         </li>
+         <li class="mui-table-view-cell dn" id="modify">
+         	<a href="securCodeEdit.html" class="mui-navigate-right"><i class="hl_person"><img src="../images/hl_icon2.png"></i>修改安全码</a>
+         </li>
+         <li class="mui-table-view-cell dn" id="patchBolt">
+       	   <a class="mui-navigate-right"><i class="hl_person"><img src="../images/hl_icon3.png"></i>资料补件</a>
+         </li>
+	</ul>
+</div>
+<section class="hl_footNum">
+	<p>客服电话</p>
+	<p>400-851-6977</p>
+</section>
+
+
+ <div class="popupbox dn">
+    <div class="bg"></div>
+    <div class="popbox">
+      <div class="content">您输入的密码或手机验证码不正确，请确认后重新输入。</div>
+      <div class="orc">
+          <div class="cancel popupbox_cancel">取消</div>
+          <div class="ok popupbox_ok">确认</div>
+      </div>
+      <div class="justok dn popupbox_ok">确认</div>
+    </div>
+  </div>
+
+<script src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/mui.min.js"></script>
+<script src="../js/common.js"></script>
+<script>
+mui.init({
+	swipeBack:true //启用右滑关闭功能
+});
+//读取本地缓存;判断是否登录;
+ gotologin();
+//==================从缓存中获取userid; 
+var userId;
+//判断用户登录状态,如果是已登录,读取
+if( getLoginStatus() ){
+	//获取用户userId;
+	userId = getLocal("userId")|| getCookie( "userId");
+}
+// 获取信用额度
+function getCredit(){
+    function aSuccessFunc(msg){
+      // console.log(msg);
+      $("#creditlimit").html(msg.data.creditlimit);
+        if(msg.state == "F"){
+            $(".popupbox").show();
+            $(".content").html(popupTIPS.tips11)
+        }
+    }
+    function aErrorFunc(){
+
+    }
+    // var userId = getUrlParam(userId);
+    var aRequestData =  "apiVersion=" + apiVersion +"&devName=" + devName + "&userId="+ userId;
+    httpAjax('get', 'creditlimitstate', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);  
+}
+getCredit();
+
+// 获取用户状态
+function getUserMode(){ 
+    function aSuccessFunc(msg){
+      console.log(msg);
+      //储存用户状态
+      if(isSessionStorageSupported()){
+          msg.data.auditState&&setLocal('auditState', msg.data.auditState);
+      }else{
+          msg.data.auditState&&setCookie('auditState', msg.data.auditState, 1);
+      }
+      if( msg.data.auditState == 0){
+        $(".personInformation").click(function(){
+          window.location.href="careerChoice.html";
+        })
+        $("#getUserMode").text(popupTIPS.tips12)
+      }else if ( msg.data.auditState >= 1 && msg.data.auditState <= 4){
+        $("#getUserMode").text(popupTIPS.tips13)
+      }else if ( msg.data.auditState == 5){
+        $("#getUserMode").text(popupTIPS.tips14)
+        $("#modify").show();
+      }else if ( msg.data.auditState == 7 ){
+        $("#getUserMode").text(popupTIPS.tips15)
+        $("#modify").show();
+      }else if ( msg.data.auditState == 8 ){
+        $("#getUserMode").text(popupTIPS.tips16)
+        $("#modify").show();
+      }else if ( msg.data.auditState == 9 ){
+        $("#getUserMode").text(popupTIPS.tips14)
+        $("#modify").show();
+        $("#patchBolt").show();
+        $("#patchBolt").click(function(){
+          window.location.href="DataSupplement.html";
+        })
+      }
+
+      if( msg.data.auditState > 0){
+        $(".personInformation").click(function(){
+          window.location.href="privateCreLight.html"
+        })
+      }
+    }
+    function aErrorFunc(){
+      // mui.alert("错了，召唤师！")
+    }
+    var aRequestData = "apiVersion=" + apiVersion +"&devName=" + devName + "&userId="+ userId;
+    httpAjax('get', 'accuntState', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);  
+}
+getUserMode();
+
+//判断返回跳转的位置;
+var goBackUrl = getUrlParam('goback');
+$("#goBackBtn").on("click",function(){	
+	if( goBackUrl == "null" && getLoginStatus() ){
+		window.location.href = "private.html#mp.weixin.qq.com";
+	}else{
+		window.location.href = "index.html#mp.weixin.qq.com";
+	}
+})
+
+</script>
+</body>
+</html>

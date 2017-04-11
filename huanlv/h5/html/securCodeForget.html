@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="apple-mobile-web-app-title" content="欢旅金融登录">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>找回安全码</title>
+<!-- APP自用CSS -->
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/hl_style.css">
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+</head>
+<body class="hl_mainbg">
+<header class="mui-bar mui-bar-nav hl_headerSty">
+   <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+   <h1 class="mui-title">找回安全码</h1>
+</header>
+<!-- 占位 -->
+<section class="mt50"><p class="hl_bespeakTips1"></p></section>
+<div class="hl-collapse-content">
+  	<div class="hl_input_group">
+  		<div class="hl_bespeakTips">
+  			手机号码： <span id="moblie">-</span>
+  		</div>
+		<div class="hl_input_row">
+			<input type="text" id="idCard" name="idCard" placeholder="身份证号码" maxlength="18">
+		</div>
+		<div class="hl_input_row">
+			<input type="text" id="pngCode" name="pneCode" class="hl_input_yanz" placeholder="图片验证码" maxlength="6">
+            <a href="javascript:;" class="hl_label_yzm"><img id="pngCodeVali" src="" alt=""></a>
+		</div>
+		<div class="hl_input_row">
+			<input type="text" id="phoneCode" name="phoneCode" placeholder="手机验证码" maxlength="6">
+            <span class="hl_r_bnt" id="getPhoneCode">获取短信验证码</span>
+		</div>
+	</div>
+	<input id="forgetSecurCode" type="button" class="btn" value="下一步">
+</div>
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/md5-min.js"></script>
+<script src="../js/common.js"></script>
+<script>
+
+//==================读取本地缓存;判断是否登录;
+gotologin();
+
+//==================从缓存中获取moblie; 
+var mobile;
+//判断用户登录状态,如果是已登录,读取
+if( getLoginStatus() ){
+	//获取用户手机号;
+	mobile = getLoginStatus();
+	$("#moblie").text( mobile );
+}
+
+//身份证验证;
+$("#idCard").bind("blur",function(){
+	var idCard =  $("#idCard").val();
+	var reg = /^((\d{15})|(\d{18})|(\d{17}(\d|X)))$/;
+	if(!reg.test(idCard) ){
+		mui.alert(popupTIPS.tips39);
+		return false;
+	}
+})
+
+//输入框只能是数字；
+$("#pngCode").numeral();
+$("#phoneCode").numeral();
+
+var picNumber = "";
+/**
+ * 图片验证码
+ */
+function verifyCode(){
+	picNumber = randomNum(8);
+	$('#pngCodeVali').attr("src",CONST_SERVER_DOMAIN+"captcha/"+picNumber);
+}
+verifyCode();
+/**
+ * 身份验证
+ */
+function IDCard(){
+	var idCard =  $("#idCard").val();
+	var pngCode = $("#pngCode").val();
+	var phoneCode = $("#phoneCode").val();
+	if(idCard == ''){
+	  mui.alert('身份证号码不能为空', '提示');
+	  return false;
+	}
+	if(!/^((\d{15})|(\d{18})|(\d{17}(\d|X)))$/.test(idCard)){
+	  mui.alert(popupTIPS.tips45);
+	  return false;
+	}
+	if(pngCode == ''){
+		mui.alert(popupTIPS.tips33);
+		return false;
+	}
+	if(phoneCode == ''){
+		mui.alert(popupTIPS.tips43);
+		return false;
+	}
+    return true;
+}
+/**
+ * 发送短信验证码
+ */
+function sendCode(){
+	//sendPhoneCodeFlag =false;
+	//前端验证
+	var idCard =  $("#idCard").val();
+	var pngCode = $("#pngCode").val();
+	if(idCard == ''){
+	  mui.alert('身份证号码不能为空', '提示');
+	  return false;
+	}
+	if(!/^((\d{15})|(\d{18})|(\d{17}(\d|X)))$/.test(idCard)){
+	  mui.alert(popupTIPS.tips45);
+	  return false;
+	}
+	if(pngCode == ''){
+		mui.alert(popupTIPS.tips33);
+		return false;
+	}
+	
+ 	//参数获取;
+	var param = {};
+	param["sessionId"] = picNumber;
+	param["picCode"] = $("#pngCode").val();
+	param["mobile"] =  mobile;        		//从本地缓存中读取的 "15121155775" mobile;
+	param["apiVersion"] = apiVersion;
+	//md5加密;
+	console.log( md5seri(param) );
+	param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+	
+ 	$.ajax({
+	    type : "post",
+	    url : CONST_SERVER_DOMAIN + "common/sendSms",
+	    dataType : "json",
+	    data : param,
+	    success : function(data){
+	    	console.log(data)
+		    if(data != null&& data!=''){
+			    if(data.state == 'S'){//短信发送成功
+			    	//sendPhoneCodeFlag =true;
+			    	console.log("短信发送成功");
+			    	mui.alert(data.msg);
+			    }else{//短信发送失败
+			    	console.log("短信发送失败");
+			    	mui.alert(data.msg);
+			    }
+			    return;
+		     }
+		    mui.alert(data.msg);
+		    return;
+	    },
+	    error: function(e) {
+	        mui.alert(popupTIPS.tips46);
+	        return;
+	    }
+	 });
+}
+
+//点击下一步提交按钮封装函数;
+function forgetSecurCode(){
+	if(!IDCard()){
+		return false;
+	}
+	//随机数;
+	if( picNumber ){
+		if( isSessionStorageSupported() ){
+			setcache("picNumber", picNumber);
+		}else{
+			setCookie("picNumber", picNumber );
+		}
+	}
+	//把身份证存到缓存中;
+	if( $("#idCard").val() ){
+		if( isSessionStorageSupported() ){
+			setcache("idCardValue", $("#idCard").val());
+		}else{
+			setCookie("idCardValue", $("#idCard").val() );
+		}
+	}
+	//把图片验证码存到缓存中;
+	if( $("#pngCode").val() ){
+		if( isSessionStorageSupported() ){
+			setcache("pngCodeValue", $("#pngCode").val());
+		}else{
+			setCookie("pngCodeValue", $("#pngCode").val() );
+		}
+	}
+	//把手机验证码存到缓存中;
+	if( $("#phoneCode").val() ){
+		if( isSessionStorageSupported() ){
+			setcache("phoneCodeValue", $("#phoneCode").val());
+		}else{
+			setCookie("phoneCodeValue", $("#phoneCode").val() );
+		}
+	}
+	
+	//页面跳转
+	window.location.href="securCode.html";
+}
+
+
+
+$(function(){
+	
+	//=====================图片验证码;
+    $("#pngCodeVali").on("touchend",function(){
+		var idCard =  $("#idCard").val();
+		if(idCard == ''){
+		  mui.alert(popupTIPS.tips45);
+		  return false;
+		}
+		if(!/^((\d{15})|(\d{18})|(\d{17}(\d|X)))$/.test(idCard)){
+		  mui.alert(popupTIPS.tips39);
+		  return false;
+		}
+		//请求发送;
+		verifyCode();
+	})
+	
+	//=====================短信验证码
+	//倒计时变量;
+	var cdNum = 0;
+	$("#getPhoneCode").on("touchend", function(){
+		//点击获取短信验证码倒计时提示
+		if( cdNum > 0 ){
+			return;
+		}
+		cdNum = 60;
+		$("#getPhoneCode").html("再次获取(" + cdNum + ")");
+		var cd = setInterval(function(){
+			cdNum--;
+			if( cdNum < 0  ){
+				cdNum = 0;
+				$("#getPhoneCode").html("再次获取");
+				clearInterval(cd);
+			}else{
+				$("#getPhoneCode").html("再次获取(" + cdNum + ")");
+			}
+		},1000)
+		//发送短信调用请求;
+    	sendCode();
+    });
+	
+	//===================提交请求按钮;
+	$("#forgetSecurCode").on("touchend",function(){
+		//调用请求方法;
+		forgetSecurCode();
+	})
+	
+})
+</script>
+</body>
+</html>

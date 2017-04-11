@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>订单</title>
+  	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+	  <!--标准mui.css-->
+    <link rel="stylesheet" href="../css/mui.min.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="../css/hl_style.css">
+    <link rel="stylesheet" type="text/css" href="../css/OrderList.css">
+</head>
+<body style="background: #fff;">
+	<!--头部-->
+    <header class="mui-bar mui-bar-nav hl_headerSty mui_nav_bg">
+        <a class="mui-icon mui-icon-left-nav mui-pull-left" href="javascript:;" id="goBackBtn"></a>
+        <h1 class="mui-title">订单</h1>
+        <a class="mui-icon mui-pull-right hl_iphone" onclick="callMobile()" id="phoneBtn"></a>
+    </header>
+	<!--订单列表-->
+	<article>
+		<div id="orderList">
+		</div>
+	</article>
+	
+	<!-- 没有订单时候的提示 -->
+	<div id="hl_dataNull" class="orderNull ma-0" align="center" style="display: none;">
+		<img alt="" class="orderNo" src="../images/orderNo.png">
+		<p class="mg-3"></p>
+		<p class="hl_dataNull_font">无订单记录</p>
+	</div>
+<!--mui自带类库-->
+<script src="../js/mui.min.js"></script>
+<!--MD5加密类库-->
+<script src="../js/md5-min.js"></script>
+<!--jquery类库-->
+<script src="../js/jquery-1.9.1.min.js"></script>
+<!--公共方法类库-->
+<script src="../js/common.js"></script>
+
+<script type="text/javascript">
+$(function(){
+	//==================读取本地缓存;判断是否登录;
+	gotologin();
+	//==================从缓存中获取userid; 
+	var userId,oState,shoufu,lixi,shouxu;
+	//判断用户登录状态,如果是已登录,读取
+	if( getLoginStatus() ){
+		//获取用户userId;
+		userId = getLocal("userId")|| getCookie( "userId");
+	}
+	
+	var param = {};
+	param["userId"] = userId;
+	param["apiVersion"] = apiVersion;
+	param["devName"] = devName;
+	//md5加密;
+	param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+	var aRequestData = param ;
+	
+	function aSuccessFunc(orderResp){
+		console.log(orderResp)
+		var orderList = orderResp.data;
+		if(orderResp.state == 'S'){
+			if(orderResp.data.length == 0){
+				$("#hl_dataNull").css("display","block");
+			}else{
+				$("#hl_dataNull").css("display","none");
+				$("#orderList").html("");
+				var oHtml = '';
+				for(var i in orderList){
+					if(orderList[i].orderstate == '确认中'){
+						oState = '<img src="../images/hl_state_01.png" alt="">';
+					}else if(orderList[i].orderstate == '已确认'){
+						oState = '<img src="../images/hl_state_02.png" alt="">';
+					}else if(orderList[i].orderstate == '已取消'){
+						oState = '<img src="../images/hl_state_03.png" alt="">';
+					}else if(orderList[i].orderstate == '已完成'){
+						oState = '<img src="../images/hl_state_04.png" alt="">';
+					}else{
+						oState = '<img src="../images/hl_state_05.png" alt="">';
+					}
+					
+					//零首付
+					if(orderList[i].pay_scale == '0'){
+						shoufu = '<em class="shoufu orderListEm">0首付</em>';
+					}else if(orderList[i].pay_scale == null || orderList[i].pay_scale == ''){
+						shoufu = '<span class="shoufu"></span>';
+					}else{
+						shoufu = '<em class="shoufu orderListEm">'+orderList[i].pay_scale+'%首付</em>';
+					}
+					//零利息
+					if(orderList[i].fundRate == '0'){
+						lixi = '<em class="lixi orderListEm">0利率</em>';
+					}else if(orderList[i].fundRate == null || orderList[i].fundRate == ''){
+						lixi = '<span class="lixi"></span>';
+					}else{
+						lixi = '<span class="lixi"></span>';
+					}
+					//零手续费
+					if(orderList[i].procedureRate == '0'){
+						shouxu = '<em class="shouxu orderListEm">0手续费</em>';
+					}else if(orderList[i].procedureRate == null || orderList[i].procedureRate == ''){
+						shouxu = '<span class="shouxu"></span>';
+					}else{
+						shouxu = '<span class="shouxu"></span>';
+					}
+					
+					var id = orderList[i].orderid;
+					oHtml+= '<div class="order-list"><span style="display:none;" class="orderid">'+orderList[i].orderid+'</span><span style="display:none;" class="prod_no">'+orderList[i].prod_no+'</span><div class="order-status">'
+					+ oState +'</div><div class="order">'
+					+'<div class="order-tit">'+orderList[i].prod_title+'</div>'
+					+'<div class="time"><span class="prodFeatures">'+orderList[i].prodFeatures+'</span>&nbsp;|&nbsp;<span style="display:none;" class="createTime">'+orderList[i].createTime+'</span><span class="end-time">截至日期'+orderList[i].shelves_down_time.split(" ")[0]+'</span></div>'
+			        +'<div class="price"><div class="price-t">￥<p class="orderamount">'+orderList[i].orderamount+'</p>'+ shoufu + lixi + shouxu +'</div>'
+			        +'<div class="price-b"><p class="stage_num">'+orderList[i].stage_num+'</p>期&nbsp;|&nbsp; ￥<p class="stage_price">'+orderList[i].stage_price+'</p>/期 </div></div></div></div>';	
+				    
+				}
+				$("#orderList").append( oHtml );
+			}
+		}
+		if(orderResp.state == 'F'){
+			mui.alert(orderResp.msg , '提示');
+		}
+	}
+	
+	function aErrorFunc(data){
+		console.log('错误')
+	}
+	//获取基础数据列表;
+	httpAjax("POST", "order/getListOrder", aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);
+	//点击产品列表项;
+	$(document).on("touchend", ".order-list", function (e) {
+		if (isClick) {
+			gotopage($(this).attr("orderid"));
+	        /**更改缓存*/
+			if( isSessionStorageSupported() ){
+				setcache("prod_title",$(".order-tit").eq($(this).index()).text());
+		        setcache("prodFeatures",$(".prodFeatures").eq($(this).index()).text());
+		        setcache("shelves_down_time",$(".end-time").eq($(this).index()).text());
+		        setcache("orderamount",$(".orderamount").eq($(this).index()).text());
+		        setcache("stage_num",$(".stage_num").eq($(this).index()).text());
+		        setcache("stage_price",$(".stage_price").eq($(this).index()).text());
+		        setcache("shoufu",shoufu);//零首付
+		        setcache("lixi",lixi);//零利息
+		        setcache("shouxu",shouxu);//零手续费
+		        setcache("orderid",$(".orderid").eq($(this).index()).text());
+		        setcache("prod_no",$(".prod_no").eq($(this).index()).text());
+		        setcache("createTime",$(".createTime").eq($(this).index()).text());
+			}else{
+				setCookie("prod_title",$(".order-tit").eq($(this).index()).text(),2);
+				setCookie("prodFeatures",$(".prodFeatures").eq($(this).index()).text(),2);
+				setCookie("shelves_down_time",$(".end-time").eq($(this).index()).text(),2);
+				setCookie("orderamount",$(".orderamount").eq($(this).index()).text(),2);
+				setCookie("stage_num",$(".stage_num").eq($(this).index()).text(),2);
+				setCookie("stage_price",$(".stage_price").eq($(this).index()).text(),2);
+				setCookie("shoufu",shoufu);//零首付
+				setCookie("lixi",lixi);//零利息
+				setCookie("shouxu",shouxu);//零手续费
+				setCookie("orderid",$(".orderid").eq($(this).index()).text(),2);
+		        setCookie("prod_no",$(".prod_no").eq($(this).index()).text(),2);
+		        setCookie("createTime",$(".createTime").eq($(this).index()).text(),2);
+			}
+		}
+		//return false;
+	});
+	//跳转页面;
+	function gotopage(id) {
+		window.location = "OrderDetails.html?orderid=" + id ;
+	}
+});
+//拨打电话
+function callMobile(){
+    //if(isWeiXin()){
+        /*window.location.href = "OrderList.html#mp.weixin.qq.com";*/
+		$("#phoneBtn").attr("href", "tel:" + telNumber);
+    //}
+}
+
+$(document).ready(function(){
+	var heightChange = $(window).height()/2-150;
+	var heightBottom = $(window).height()/4-80;
+	document.getElementById('hl_dataNull').style.marginTop= heightChange+"px";
+	document.getElementById('hl_dataNull').style.marginBottom= heightBottom+"px";
+});
+</script>
+
+<script>
+    !function (N, M) {  /*动态设置DPR*/
+      function L() {
+        var a = I.getBoundingClientRect().width;
+        a / F > 540 && (a = 540 * F);
+        var d = a / 10;
+        I.style.fontSize = d + "px", D.rem = N.rem = d
+      }
+
+      var K, J = N.document, I = J.documentElement, H = J.querySelector('meta[name="viewport"]'), G = J.querySelector('meta[name="flexible"]'), F = 0, E = 0, D = M.flexible || (M.flexible = {});
+      if (H) {
+        console.warn("将根据已有的meta标签来设置缩放比例");
+        var C = H.getAttribute("content").match(/initial\-scale=([\d\.]+)/);
+        C && (E = parseFloat(C[1]), F = parseInt(1 / E))
+      } else {
+        if (G) {
+          var B = G.getAttribute("content");
+          if (B) {
+            var A = B.match(/initial\-dpr=([\d\.]+)/), z = B.match(/maximum\-dpr=([\d\.]+)/);
+            A && (F = parseFloat(A[1]), E = parseFloat((1 / F).toFixed(2))), z && (F = parseFloat(z[1]), E = parseFloat((1 / F).toFixed(2)))
+          }
+        }
+      }
+      if (!F && !E) {
+        var y = N.navigator.userAgent, x = (!!y.match(/android/gi), !!y.match(/iphone/gi)), w = x && !!y.match(/OS 9_3/), v = N.devicePixelRatio;
+        F = x && !w ? v >= 3 && (!F || F >= 3) ? 3 : v >= 2 && (!F || F >= 2) ? 2 : 1 : 1, E = 1 / F
+      }
+      if (I.setAttribute("data-dpr", F), !H) {
+        if (H = J.createElement("meta"), H.setAttribute("name", "viewport"), H.setAttribute("content", "initial-scale=" + E + ", maximum-scale=" + E + ", minimum-scale=" + E + ", user-scalable=no"), I.firstElementChild) {
+          I.firstElementChild.appendChild(H)
+        } else {
+          var u = J.createElement("div");
+          u.appendChild(H), J.write(u.innerHTML)
+        }
+      }
+      N.addEventListener("resize", function () {
+        clearTimeout(K), K = setTimeout(L, 300)
+      }, !1), N.addEventListener("pageshow", function (b) {
+        b.persisted && (clearTimeout(K), K = setTimeout(L, 300))
+      }, !1), "complete" === J.readyState ? J.body.style.fontSize = 12 * F + "px" : J.addEventListener("DOMContentLoaded", function () {
+        J.body.style.fontSize = 12 * F + "px"
+      }, !1), L(), D.dpr = N.dpr = F, D.refreshRem = L, D.rem2px = function (d) {
+        var c = parseFloat(d) * this.rem;
+        return "string" == typeof d && d.match(/rem$/) && (c += "px"), c
+      }, D.px2rem = function (d) {
+        var c = parseFloat(d) / this.rem;
+        return "string" == typeof d && d.match(/px$/) && (c += "rem"), c
+      }
+    }(window, window.lib || (window.lib = {}));
+  </script>
+  <script>
+    //判断返回跳转的位置;
+	var goBackUrl = getUrlParam('goback');
+	$("#goBackBtn").on("click",function(){	
+		if( goBackUrl == "null" && getLoginStatus() ){
+			window.location.href = "private.html#mp.weixin.qq.com";
+		}else{
+			window.location.href = "index.html#mp.weixin.qq.com";
+		}
+	})
+  </script>
+</body>
+</html>

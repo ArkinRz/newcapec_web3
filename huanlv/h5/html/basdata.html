@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='baseDataApp'>
+<head>
+    <meta charset="utf-8">
+    <title>基础资料</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="../css/mui.min.css">
+    <!--App自定义的css-->
+    <!-- <link rel="stylesheet" type="text/css" href="../css/app.css"> -->
+
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="../css/hl_style.css">
+    <link rel="stylesheet" type="text/css" href="../css/ArkinStylesheet.css">
+</head>
+
+
+<body style="" ng-controller="baseDataCtrl">
+  <!--头部-->
+    <header class="mui-bar mui-bar-nav hl_headerSty" style="background:#fff;">
+        <a class="mui-icon mui-icon-left-nav mui-pull-left" href="initialMessage.html"></a>
+        <h1 class="mui-title">基础资料</h1>
+
+    </header>
+
+<div class="basdata" style="background:#f6f6f6">
+  <form class="mui-input-group arkin">
+    <div class="mui-input-row pdr0 arkin1">
+        <label>姓名</label>
+        <input type="text" class="tr cb2" ng-model='realName' readonly>
+    </div>
+    <div class="mui-input-row pdr0 arkin1">
+        <label>手机</label>
+        <input type="text" class="tr cb2 phoneNumber" ng-model='mobile' readonly>
+    </div>
+    <div class="mui-input-row pdr0 arkin1">
+        <label>身份证</label>
+        <input type="text" class="tr cb2" ng-model='certNumber' readonly>
+    </div>
+    <div class="mui-input-row pdr0 arkin1" style="position:relative;" id="arkInputBox-1">
+        <label>身份证有效期</label>
+        <!--<input type="date" class="tr cb2 inputBar" value="" disabled="disabled">-->
+        <input type="text" class="inputLy cb2" value="" style="color:#b2b2b2" id="valid_date" readonly ng-model='valid_date'> 
+    </div>
+    <div class="mui-input-row pdr0 arkin1">
+        <label>性别</label>
+        <div class="sexck" id='sexC'>
+          <span class="sex sex2" ng-bind="sex"></span>
+        </div>  
+    </div>
+    <div class="mui-input-row pdr0 arkin1">
+        <label>民族</label>
+        <input type="text" class="tr cb2" ng-model='race' readonly>
+    </div>
+    <div class="mui-input-row pdr0 arkin1" style="position:relative;" id="arkInputBox-2">
+        <label>出生日期</label>
+        <input type="text" class="inputLy cb2" value="" style="color:#b2b2b2" id="birthDate" ng-model='birthDate' readonly>
+    </div>
+    <div class="mui-input-row pdr0 arkin1 add">
+        <label>身份证地址</label>
+        <textarea class="tr cb2 ttra" name="" id="" cols="30" rows="2" ng-model='bornAddress' readonly></textarea>
+    </div>
+</form>
+
+<form class="mui-input-group arkin2 akbefore">
+    <div class="mui-input-row pdr0 arkin3 address">
+        <label>家庭详细地址</label>
+        <textarea class="cb2 ttra" name="" id="" cols="30" rows="2" placeholder="请输入详细地址" ng-model='homeAddress'></textarea>
+
+    </div>
+    <div class="mui-input-row pdr0 arkin3">
+        <label>家庭固定电话</label>
+        <input type="text" class="cb2 phonePreStyle" id="homeTel_pre" placeholder="区号" ng-model='homeTel_pre' maxlength="4">
+        <i class="line"></i>
+        <input type="text" class="cb2 phoneStyle" id="homeTel_aft" placeholder="电话" ng-model='homeTel_aft' maxlength="8">
+    </div>
+    <div class="mui-input-row pdr0 arkin3">
+        <label>每月零花钱</label>
+        <input type="text" class="cb2" id="monthAllow" placeholder="请输入金额" ng-model='monthAllow'>
+    </div>
+    <div class="mui-input-row pdr0 arkin3">
+        <label>QQ</label>
+        <input type="text" class="cb2" id="qq" placeholder="请输入QQ号码" ng-model='qq'>
+    </div>
+    <div class="mui-input-row pdr0 arkin3">
+        <label>邮箱</label>
+        <input type="text" class="cb2" placeholder="请输入邮箱" ng-model='mail'>
+    </div>
+   
+</form>
+
+<form class="mui-input-group arkin2 mrt30">
+    <div class="mui-input-row pdr0 arkin3 address">
+        <label>宿舍地址</label>
+        <!-- <input type="text" class="tr cb2" placeholder="请输入姓名"> -->
+        <textarea class="cb2 ttra" name="" id="" cols="30" rows="2" placeholder="请输入宿舍地址" ng-model='dormAddress'></textarea>
+
+    </div>
+    
+    <ul class="mui-table-view">
+      <li class="mui-table-view-cell">
+        <a class="mui-navigate-right js-zxd">有无助学贷款<span id="zxd-text" style="position: absolute;right: 35px;color: rgb(178, 178, 178);">无</span></a>
+      </li>
+    </ul>
+   
+</form>
+
+<form class="mui-input-group mrt30">
+    <div class="mui-input-row pdr0 relation-box">
+        <label>关系</label>
+        <span class="hl-relation">
+            <a class="mui-navigate-right js-relat hlRelation">请选择</a>
+        </span>
+        <i class="line"></i>
+        <input type="text" class="relationName" placeholder="请输入姓名" ng-model='pName'>
+    </div>
+    <div class="mui-input-row pdr0">
+        <label>手机号码</label>
+    <input type="text" class="mui-input-clear phoneNumber" id="pTel" placeholder="请输入手机号" ng-model='pTel' maxlength="11">
+    </div>
+</form>
+
+<form class="mui-input-group mrt30">
+    <div class="mui-input-row pdr0">
+        <label>本校同学姓名</label>
+    <input type="text" class="mui-input-clear" placeholder="请输入同学姓名" ng-model='stuName'>
+    </div>
+    <div class="mui-input-row pdr0">
+        <label>手机号码</label>
+    <input type="text" class="mui-input-clear phoneNumber" id="stuTel" placeholder="请输入同学的手机号" ng-model='stuTel' maxlength="11">
+    </div>
+</form>
+<div class="card mrt30" id="hl-card">
+    <canvas id="hl-cvs" width="" height="">该浏览器不支持canvas,请使用高版本浏览器</canvas>
+</div>
+<!--<div class="btn-next">下一步</div>-->
+<a href="javascript:void(0)" class="btn-next" ng-click='submitMessage()'>下一步</a>
+
+
+</div>
+<!--图片解析弹窗-->
+<div id="tipsBox">
+    <div>
+        <img src="../images/loading_big.gif"/>
+        <p id="tipsText" style="visibility: hidden;">识别中,请稍后!</p>
+    </div>
+</div>
+<div class="zxd">
+  <div class="bg"></div>
+  <div class="xz" id="stuLoanFlag">
+    <div class="xz-tit"><span class="zuo">关闭</span><span class="you sure stuLoanComplect">完成</span></div>
+    <div class="top selectIt">无</div>
+    <div class="down">有</div>
+  </div>
+</div>
+<div class="hl-relat">
+    <div class="bg"></div>
+    <div class="xz relat-box">
+        <div class="xz-tit"><span class="zuo">关闭</span><span class="you sure relatComplet">完成</span></div>
+        <div class="relat-contentBox">
+            <div class="scroll-box">
+                <a class="relat-item relat-active relat-bottom-line selectIt">父亲</a>
+                <!--<a class="relat-item relat-bottom-line">朋友</a>
+                <a class="relat-item relat-bottom-line">儿女</a>
+                <a class="relat-item relat-bottom-line">配偶</a>
+                <a class="relat-item relat-bottom-line">兄弟</a>
+                <a class="relat-item relat-bottom-line">姐妹</a>-->
+                <a class="relat-item">母亲</a>
+                <!--<a class="relat-item">同学</a>-->
+            </div>
+        </div>  
+    </div>
+</div>
+<div class="draw">
+  <div class="bg" style="position: absolute; top:0; left: 0;"></div>
+  <div class="draw-name" id="draw-name">
+    <div class="draw-tit" id="draw-tit"><span class="draw-clean">清除</span><span class="draw-ok">保存</span><span class="draw-close">取消</span></div>
+    <div class="card" id="card">
+      <canvas id="cvs" width="" height="">该浏览器不支持canvas,请使用高版本浏览器</canvas>
+    </div>
+  </div>
+</div>
+
+<!-- 日期控件 -->
+    <!-- <p>请选择日期：<input type="text" class="input" id="pickdate" /></p><br/> -->
+    <!-- <p>请选择时间：<input type="text" class="input" id="picktime" /></p> -->
+    <!-- <input type="date"> -->
+<!-- 日期控件 end -->
+    
+
+<script src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/mui.min.js"></script>
+<script src="../js/angular.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/common.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/md5-min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	//==================读取本地缓存;判断是否登录;
+	gotologin('flag');//传入参数 表示登录后页面不跳转直接进入'我的'
+	
+    var canvas=null,context=null,showcCanvas=null,showContext=null;
+    var card = document.getElementById('card'),hlCard = document.getElementById('hl-card');
+    var spans = $('#draw-tit span');
+     $('#draw-tit span').bind('touchend',function(e){
+        if($(this).index() == 0){//清除
+              var cvs = $('#cvs')[0].getContext('2d');
+              cvs.clearRect(0,0,$('#cvs').width(),$('#cvs').height());
+              cvs.fillStyle = '#FFFFFF';
+              cvs.fillRect(0,0,$('#card').width(),$('#card').height());
+              cvs.globalAlpha = 1;
+          }else if($(this).index() == 1){//save
+              var context = $('#hl-cvs')[0].getContext('2d');
+              context.clearRect(0,0,$('#hl-cvs').width(),$('#hl-cvs').height());
+              context.drawImage($('#cvs')[0],0,0,$('#cvs').width(),$('#cvs').height(),0,0,$('#hl-cvs').width(),$('#hl-cvs').height());
+              $('#hl-cvs').css({'background-color': '#fff'});
+              //$('.draw').fadeOut(200);
+              $('.draw').css({'opacity': 0,'z-index': -1});
+          }else if($(this).index() == 2){//close
+              //$('.draw').fadeOut(200);
+              $('.draw').css({'opacity': 0,'z-index': -1});
+          }
+          return false;
+     });
+     //获取canvas对象及环境
+     function resetCanvas(){
+        canvas=document.getElementById('cvs');
+        context=canvas.getContext('2d');
+     }
+     //手写处理
+//   var cvsOffset = $('#cvs').position();//cvs偏移量
+//   var drawNameOffset = $('#draw-name').position();//draw偏移量
+//   var cvsoffsetX = drawNameOffset.left + cvsOffset.left;//canvas原点X偏移
+//   var cvsoffsetY = drawNameOffset.top + cvsOffset.top;//canvas原点Y偏移
+     var cvsOffset = 0;//cvs偏移量
+     var drawNameOffset = 0;//draw偏移量
+     var cvsoffsetX = 0;//canvas原点X偏移
+     var cvsoffsetY = 0;//canvas原点Y偏移
+     function bindFn(){
+        resetCanvas();
+        canvas.width = card.offsetWidth;
+        canvas.height = card.offsetHeight;
+        context.fillStyle = '#FFFFFF';
+        context.fillRect(0,0,card.offsetWidth,card.offsetHeight);
+        context.globalAlpha = 1;
+        //startSign();
+    }    
+    function startSign(){
+        canvas.addEventListener('touchstart',function(evt){
+            var x = evt.touches[0].clientX - cvsoffsetX;
+            var y = evt.touches[0].clientY - cvsoffsetY;
+            evt.preventDefault();
+            context.beginPath(); 
+            context.moveTo(x,y);
+            canvas.addEventListener('touchmove',function(evt){
+                var x = evt.touches[0].clientX - cvsoffsetX;
+                var y = evt.touches[0].clientY - cvsoffsetY;
+                /*if(x < 0 ||y < 0){
+                    context.beginPath();
+                    return;
+                }*/
+                context.lineTo(x,y);
+                context.stroke();
+                //return false;
+            },false);
+            canvas.addEventListener('touchend',function(evt){
+                canvas.removeEventListener('touchmove',null,false);
+                canvas.removeEventListener('touchend',null,false);
+            },false);
+            return false;
+        },false);
+    }     
+    function resetShowCanvas(){
+        showcCanvas=document.getElementById('hl-cvs');
+        showContext=showcCanvas.getContext('2d');
+    }
+    $(document).ready(function(){
+        resetShowCanvas();
+        var img = new Image();
+        showcCanvas.width = hlCard.offsetWidth*0.9;
+        showcCanvas.height = hlCard.offsetHeight;
+        img.onload = function(){
+            var scale = this.width/this.height;
+            var imgW = showcCanvas.width * 0.7;
+            var imgH = imgW / scale;
+            var lx = (showcCanvas.width - imgW)/2;
+            showContext.drawImage(this,0,0,this.width,this.height,lx,lx,imgW,imgH);
+        }
+        var clientHeight = document.documentElement.clientHeight;
+        var top = clientHeight/2;
+        var marginTop = -(45 + showcCanvas.height)/2;
+        $('.draw .draw-name').css({top: top+marginTop});
+        img.src = '../images/cvsImg.png';
+        var isFirstClick = true;//第一次点击canvas
+        showcCanvas.addEventListener('click',function(evt){
+            evt.preventDefault();
+            var cvs = $('#cvs')[0].getContext('2d');
+            cvs.clearRect(0,0,$('#cvs').width(),$('#cvs').height());
+            cvs.fillStyle = '#FFFFFF';
+            cvs.fillRect(0,0,$('#card').width(),$('#card').height());
+            cvs.globalAlpha = 1;
+            //$('.draw').fadeIn(200);
+            $('.draw').animate({'opacity': 1,'z-index': 11},300,function(){
+                cvsOffset = $('#cvs').position();
+                drawNameOffset = $('#draw-name').position();
+                cvsoffsetX = drawNameOffset.left + cvsOffset.left;//canvas X偏移
+                cvsoffsetY = drawNameOffset.top + cvsOffset.top;//canvas Y偏移
+                startSign();
+            });
+        },false);
+        bindFn();
+        $('.bg').bind('touchmove',function(e){
+            e.preventDefault();
+            return false;
+        });
+        $('.draw').bind('touchmove',function(e){
+            e.preventDefault();
+            return false;
+        });
+    });   
+  </script>
+
+<script>
+  $(function(){
+    $(".js-zxd").click(function(){
+      $(".zxd").fadeIn(200);
+    })
+    $('.js-relat').click(function(){
+      $(".hl-relat").fadeIn(200);
+    })
+    $(".bg").click(function(){
+      $(".zxd").fadeOut(200);
+      $(".relat").fadeOut(200);
+      $(".hl-relat").fadeOut(200);
+    })
+    $(".zuo").click(function(){
+      $(".zxd").fadeOut(200);
+      $(".relat").fadeOut(200);
+      $(".hl-relat").fadeOut(200);
+    })
+    $(".top").click(function(){
+      $(this).addClass("selectIt");
+      $(".middle").removeClass("selectIt");
+      $(".down").removeClass("selectIt");
+    })
+    $(".middle").click(function(){
+      $(this).addClass("selectIt");
+      $(".top").removeClass("selectIt");
+      $(".down").removeClass("selectIt");
+    })
+    $(".down").click(function(){
+      $(this).addClass("selectIt");
+      $(".top").removeClass("selectIt");
+      $(".middle").removeClass("selectIt");
+    })
+
+    $(".sure").click(function(){
+      $(".zxd").fadeOut(200);
+      $(".hl-relat").fadeOut(200);
+    });
+    $('.stuLoanComplect').click(function(){
+        $('#zxd-text').html($('#stuLoanFlag .selectIt').html());
+        $('#zxd-text').css({'color': '#333'});
+    });
+    $('#arkInputBox-1 input')[0].onchange = function(){
+        $('#arkInputBox-1 input')[1].value = $('#arkInputBox-1 input')[0].value;
+    }
+    $('#arkInputBox-2 input')[0].onchange = function(){
+        $('#arkInputBox-2 input')[1].value = $('#arkInputBox-2 input')[0].value;
+    }
+    //绑定关系选项
+    for(var i=0; i<$('.scroll-box a').length; i++){
+        $('.scroll-box a')[i].index = i;
+        $('.scroll-box a')[i].onclick = function(){
+          for(var j=0; j<$('.scroll-box a').length; j++){
+              if(j!=$('.scroll-box a').length-1)
+              $('.scroll-box a')[j].className = "relat-item relat-bottom-line";
+              else $('.scroll-box a')[j].className = "relat-item";
+          }
+          $(this).addClass("selectIt");
+        }
+    }
+    $('.relatComplet').click(function(){
+        $('.hlRelation').html($('.hl-relat .selectIt').html());
+        $('.hl-relation .hlRelation').css({'color': '#333'});
+    });
+    //输入框只能是数字；homeTel_pre homeTel_aft monthAllow qq pTel stuTel
+    $("#homeTel_pre").numeral();
+    $("#homeTel_aft").numeral();
+    $("#monthAllow").numeral();
+    $("#qq").numeral();
+    $("#pTel").numeral();
+    $("#stuTel").numeral();
+  });
+</script>
+<script>
+    $('#goBack').bind('click', function () {
+      window.javatojs.JSWithTypeAndJsonString("2", {});
+    });
+    //手机号码验证
+    // for(var i=0; i<$('.phoneNumber').length; i++){
+    //     $('.phoneNumber')[i].onchange = function(){
+    //         if(!checkPhone(this.value)){
+    //             this.style.color = 'red';
+    //             //this.value = '';
+    //         }else{
+    //            this.style.color = '#b2b2b2'; 
+    //         }
+    //     }    
+    // }
+    //canvas图像数据处理
+    var fileObjArray = new Array(1);
+    var fileKeyName = ['handsign'];
+	//直接读取canvas数据
+    function canvasToData(canvasObj,fileName){                  
+        // 取出 base64 格式数据
+        var canvasDataURL = canvasObj.toDataURL('image/jpeg',0.9); 
+        var data = dataURIToOBJ(fileName,canvasDataURL);
+        return data;
+    }
+    function dataURIToOBJ(fileName,dataURI){//URL数据转存处理
+        var dataString = dataURI.split(',')[1];
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        var obj = {};
+        obj.name = fileName + (mimeString == 'image/jpeg'?'.jpg':'.png');
+        obj.type = mimeString;
+        obj.data = encodeURIComponent(dataString);//安全起见 编码
+        return {'keyName': fileName, 'data': obj};
+    }
+    function sendImgToServer(url,fileDataArray,parameterObj,callBack){//发送图片到服务器
+        var fd = new FormData();
+        var param = {};
+        for(var i in parameterObj){
+            param[i]= parameterObj[i];
+        }
+        param['md5Sign'] = hex_md5(md5seri(param)).toUpperCase();//MD5加密
+        for(var i in param){
+            fd.append(i, param[i]);
+        }
+        for(var i=0; i<fileDataArray.length; i++){
+            fd.append(fileDataArray[i]['keyName'], JSON.stringify(fileDataArray[i]['data']));
+        }
+        $.ajax({
+            type: 'POST',
+            url: CONST_SERVER_DOMAIN + url,//CONST_SERVER_DOMAIN + url
+            data: fd,
+            processData: false,
+            contentType: false,
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function(evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = evt.loaded / evt.total;
+                        console.log('进度', percentComplete);
+                    }
+                }, false);
+                return xhr;
+            }
+        }).success(function (res) {
+            //console.log(res);
+            callBack&&callBack(res);
+        }).error(function (err) {
+            $('#tipsBox').css({'display': 'none'});//显示加载
+            //console.error(err);
+        });
+    }
+	function callBack(res){
+		console.log(res);
+		var obj = JSON.parse(res);
+		if(obj['state'] == 'S'){//成功,页面跳转
+			window.location = 'Information.html';
+		}
+	}
+	//获取参数定义unescape(getCookie('name').replace(/\\u/g, '%u'))
+    var app = angular.module('baseDataApp',[]);
+    app.controller("baseDataCtrl",function($scope,$http){
+        $scope.mobile = getcache("mobile")|| getCookie("mobile");//手机号码
+        $scope.birthDate = getCookie('birthday');//出生日期
+        $scope.valid_date = getCookie('valid_date')&&getCookie('valid_date').split('-')[1].split('.').join('-');//身份证有效期
+        $scope.realName = getLocal("userName")|| getCookie( "userName");//姓名
+        $scope.certNumber = getLocal("IDCard")|| getCookie( "IDCard");//idcard
+        $scope.sex = getCookie('gender');//sex
+        $scope.race = getCookie('race');//race
+        $scope.bornAddress = getCookie('address');//address
+        $scope.submitMessage = function(){
+            var data = {
+                    //"realName": $scope.realName,//用户姓名
+                    //"certNumber": $scope.certNumber,//身份证号码
+                    //"valid_date": new Date($scope.valid_date).getTime(),//身份证有效期 时间戳
+                    //"sex": $scope.sex == '男'?'1':'2',//性别 默认为男
+                    //"race": $scope.race,//民族
+                    //"birthDate":  new Date($scope.birthDate).getTime(),//出生日期 时间戳
+                    //"bornAddress": $scope.bornAddress,//出生地址
+                    "pId": getRelation(),//社交ID 默认:10
+                    "pName": $scope.pName,//社交关系姓名
+                    "pTel": $scope.pTel,//社交关系电话
+                    "stuId": '17',//默认朋友:11 同学:17
+                    "stuName": $scope.stuName,//同学姓名
+                    "stuTel": $scope.stuTel,//同学电话
+                    "homeAddress": $scope.homeAddress,//家庭住址
+                    "homeTel": $scope.homeTel_pre + '-' + $scope.homeTel_aft,//家庭固话
+                    "monthAllow": $scope.monthAllow,//每月零花钱
+                    "dormAddress": $scope.dormAddress,//宿舍地址
+                    "stuLoanFlag": '0',//助学贷款 默认为零  
+                    "qq": $scope.qq,//qq号
+                    "mail": $scope.mail,//邮箱
+                    "apiVersion": apiVersion,//版本号
+                    "devName": devName,//设备名称
+                    "userId": getLocal("userId")|| getCookie( "userId"),//用户id
+                    "mobile": getcache("mobile")|| getCookie("mobile")//手机号码
+            };
+            for(var i in data){//不能为空
+                if(data[i] == undefined){//信息未填写完全
+                    mui.alert(popupTIPS.tips37);
+                    return;
+                }
+            }//手机号码验证
+            //手写签名
+            //有无助学贷款
+            if($('#stuLoanFlag .selectIt').html() == '无'){
+                data['stuLoanFlag'] = '0';
+            }else{
+                data['stuLoanFlag'] = '1';
+            }
+            for(var i=0; i<$('.phoneNumber').length; i++){
+                if(!checkPhone($('.phoneNumber')[i].value)){
+                    mui.alert(popupTIPS.tips38);
+                    $('.phoneNumber')[i].value = '';
+                    return;
+                }               
+            }
+            //身份证验证
+            if(!validateIdCard($scope.certNumber)){//身份证填写错误
+                mui.alert(popupTIPS.tips39);
+                return;
+            } 
+            //邮箱验证
+            if(!checkEmail($scope.mail)){
+                mui.alert(popupTIPS.tips40);
+                return;
+            }
+            //区号验证
+            /*if(!checkTelPre($scope.homeTel_pre)){
+                mui.alert(popupTIPS.tips41);
+                return;
+            }
+            //固话验证
+            if(!checkTelBef($scope.homeTel_aft)){
+                mui.alert(popupTIPS.tips65);
+                return;
+            }*/
+            //固定电话检测
+            if(!checkTel(data.homeTel)){
+                mui.alert(popupTIPS.tips65);
+                return;
+            }
+            var canvasObj = document.getElementById('cvs');
+            var fileName = fileKeyName[0];
+            var handSignData = canvasToData(canvasObj, fileName);
+            fileObjArray.splice(0,1,handSignData);
+            $('#tipsBox').css({'display': 'block'});//显示加载
+            sendImgToServer('base/saveUserInfo',fileObjArray,data,callBack);//上传数据
+        }
+    });
+    //身份证号验证
+    function validateIdCard(idCard){
+        //15位和18位身份证号码的正则表达式
+        var regIdCard=/^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/;
+        
+        //如果通过该验证，说明身份证格式正确，但准确性还需计算
+        if(regIdCard.test(idCard)){
+          if(idCard.length==18){
+           var idCardWi=new Array( 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 ); //将前17位加权因子保存在数组里
+           var idCardY=new Array( 1, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2 ); //这是除以11后，可能产生的11位余数、验证码，也保存成数组
+           var idCardWiSum=0; //用来保存前17位各自乖以加权因子后的总和
+           for(var i=0;i<17;i++){
+            idCardWiSum+=idCard.substring(i,i+1)*idCardWi[i];
+           }
+        
+           var idCardMod=idCardWiSum%11;//计算出校验码所在数组的位置
+           var idCardLast=idCard.substring(17);//得到最后一位身份证号码
+        
+           //如果等于2，则说明校验码是10，身份证号码最后一位应该是X
+           if(idCardMod==2){
+            if(idCardLast=="X"||idCardLast=="x"){
+              return true;
+            }else{
+              return false;
+            }
+           }else{
+            //用计算出的验证码与最后一位身份证号码匹配，如果一致，说明通过，否则是无效的身份证号码
+            if(idCardLast==idCardY[idCardMod]){
+              return true;
+            }else{
+              return false;
+            }
+           }
+          } 
+        }else{
+          return false;//格式不正确
+        }
+    }
+    //canvas图片转base64
+    function getCanvasURL(cvsObj){
+        var imageData = cvsObj.toDataURL('image/png');  
+        return imageData.substr(22);
+    }
+    //电话号码验证
+    function checkPhone(phoneObjValue){
+        var phone = phoneObjValue; 
+        if(!(reg.test(phone))){ 
+            return false;
+        }
+        return true;
+    }
+    function getRelation(){//获取关系
+        var relation = '';
+        switch($('.hl-relat .selectIt').html()){
+            case '父亲':
+                relation = '10';
+                break;
+//          case '朋友':
+//              relation = '11';
+//              break;
+//          case '儿女':
+//              relation = '12';
+//              break;
+//          case '配偶':
+//              relation = '13';
+//              break;
+//          case '兄弟':
+//              relation = '14';
+//              break;
+//          case '姐妹':
+//              relation = '15';
+//              break;
+            case '母亲':
+                relation = '16';
+                break;
+//          case '同学':
+//              relation = '17';
+//              break;
+        }
+        return relation;
+    }
+  </script>
+</body>
+</html>

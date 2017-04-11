@@ -1,0 +1,122 @@
+html{
+    background-color: #f9f9f9;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+body{
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+    padding-top: 70px;
+}
+.hl_headerBlueSty{
+    background-color: #31b1ff;
+}
+.hl_headerBlueSty a,.hl_headerBlueSty h1{
+    color: white;
+}
+.frontal-box{
+    width: 47.459459%;
+    /*max-width: 480px;*/
+    min-height: 90px;
+    height: 19%;
+    margin: 0 auto;
+    background-color: white;
+    border: 1px solid #f0f0f0;
+    text-align: center;
+    padding: 10px 0;
+    cursor: default;
+    box-shadow: 1px 0 5px #f0f0f0;
+    border-radius: 6px;
+    display: inline-block;
+}
+.frontal_comon{
+    margin-top: 5px;
+}
+.frontal-box a{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.frontal-box a:hover {
+    text-decoration: none;
+}
+.frontal-box a div{
+    /*width: 55.47745%;*/
+    height: 73.3333%;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+.frontal-box a div img{
+    height: 100%;
+    min-height: 50px;
+}
+.frontal-box #file,.frontal-box #file_1,.frontal-box #file_2,.frontal-box #file_3{
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+}
+.frontal-box a p{
+    text-align: center;
+    color: #b2b2b2;
+    font-size: 12px;
+    line-height: 2.0;
+}
+.button-box{
+    width: 100%; 
+    padding: 0 1.7625%; 
+    margin-top: 50px;
+}
+.button-box button,.button-box a{
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    color: white;
+    padding: 10px 12px;
+}
+.button-box a:nth-child(1){
+    background-color: #ffbc00;
+}
+.button-box a{
+    background-color: #31b1ff;
+    text-decoration: none;
+}
+@media only screen and (min-width: 500px){
+	.frontal-box a p{
+	    font-size: 23px;
+	}
+}
+#tipsBox{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 11;
+    background: rgba(0,0,0,.4);
+    display: none;
+}
+#tipsBox div{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    text-align: center;
+}
+#tipsBox div p{
+    color: white;
+    margin-top: 10px;
+    text-align: center;
+}
+.tipsBox div img{ width: 28%;}
+/*mark {
+    color: red;
+    background: #fff;
+}*/

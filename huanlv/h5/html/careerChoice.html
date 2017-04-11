@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta http-equiv="Expires" content="-1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Pragma" content="no-cache">
+<title>职业选择</title>
+<!-- APP自用CSS -->
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/hl_style.css">
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+<style type="text/css">
+.career_images{padding: 20px;text-align: center;}
+.career_images img{width: 80%;max-width: 80%;}
+</style>
+</head>
+<body class="hl_mainbg">
+<header class="mui-bar mui-bar-nav hl_headerSty">
+   <a class="mui-icon mui-icon-left-nav mui-pull-left" href="privateCredit.html?goback=null"></a>
+   <h1 class="mui-title">职业选择</h1>
+</header>
+<section class="mt50"><p class="hl_bespeakTips1"></p></section>
+<div class="career_images">
+	<img src="../images/car_student.png" onclick="studentIn()">
+	<p class="hl_bespeakTips"></p>
+	<img src="../images/car_officeWork.png" onclick="wait()">
+</div>
+<!--mui自带类库-->
+<script src="../js/mui.min.js"></script>
+<!--jquery类库-->
+<script src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/common.js"></script>
+<script>
+	//==================读取本地缓存;判断是否登录;
+	gotologin('flag');//传入参数 表示登录后页面不跳转直接进入'我的'
+	
+	function wait(){
+		mui.alert(popupTIPS.tips64, '提示');
+	}
+
+    function studentIn(){
+        window.location.href="privateCreLight.html"
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>我的</title>
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+<!-- APP自用CSS -->
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/hl_style.css">
+<style>
+	.title{
+		margin: 20px 15px 7px;
+		color: #6d6d72;
+		font-size: 15px;
+	}
+</style>
+</head>
+<body class="hl_mainbg">
+<header class="mui-bar mui-bar-nav hl_headerSty">
+   <!--<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>-->
+   <a class="hl_icon mui-pull-right " id="loginOut">登出</a>
+   <h1 class="mui-title">我的</h1>
+</header>
+<div class="hl_person_bg mt44">
+	<section class="hl_bespeakTips"></section>
+	<p class="f11" id="userName"></p>
+	<p class="f9" id="timeHello"></p>
+</div>
+<div class="hl_person_content">
+	<ul class="mui-table-view">
+		 <li class="mui-table-view-cell">
+		 	<a class="mui-navigate-right" href="javascript:;" id="privateCredit"><i class="hl_person"><img src="../images/hl_person_xy.png"></i>信用</a>
+		 </li>
+         <li class="mui-table-view-cell">
+         	<a class="mui-navigate-right" href="BankList.html"><i class="hl_person"><img src="../images/hl_person_yhk.png"></i>银行卡</a>
+         </li>
+         <li class="mui-table-view-cell">
+         	<a class="mui-navigate-right" href="javascript:;" id="checkList"><i class="hl_person"><img src="../images/hl_person_zd.png"></i>账单</a>
+         </li>
+         <li class="mui-table-view-cell">
+         	<a class="mui-navigate-right" href="javascript:;" id="OrderList"><i class="hl_person"><img src="../images/hl_person_dd.png"></i>订单</a>
+         </li>
+	</ul>
+</div>
+<!--公共页脚-->
+<nav class="mui-bar-bs">
+    	<a href="index.html#mp.weixin.qq.com" class="">
+    		<span class="sy"></span>
+    		<span class="tab-label">首页</span>
+    	</a>
+    	<a href="ProductList.html" class="">
+    		<span class="cp"></span>
+    		<span class="tab-label">产品</span>
+    	</a>
+    	<a href="javascript:;" class="active">
+    		<span class="wd"></span>
+    		<span class="tab-label">我的</span>
+    	</a>
+    </nav>
+<script src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/mui.min.js"></script>
+<script src="../js/common.js"></script>
+<script>
+	mui.init({
+		swipeBack:true //启用右滑关闭功能
+	});
+	
+	$(function(){
+		
+		//读取本地缓存;判断是否登录;
+		 gotologin();
+		//alert( getCookie("mobile") );
+		//如果存在,读取出来并赋给用户名标签
+		if( getLoginStatus() ){
+			var name = getLoginStatus().substring(0,3) + '****' + getLoginStatus().substring( getLoginStatus().length - 4 );
+			$("#userName").html( name );
+			//console.log( getCookie("mobile") );
+			//根据时间显示问候语
+			var oData = new Date();
+			var oHour = oData.getHours();
+			if( oHour < 12 ){
+				$("#timeHello").html("上午好!");
+			}else{
+				$("#timeHello").html("下午好!");	
+			}
+		}
+		
+		//用户退出操作;
+		$("#loginOut").on("click",function(){
+			loginOut();
+			$(this).hide();
+		})
+		
+		//页面跳转到账单列表;
+		$("#checkList").on("click",function(){
+			var checkList = null;
+			window.location = "checkList.html?goback=" + checkList;
+		})
+		//页面跳转到订单列表;
+		$("#OrderList").on("click",function(){
+			var OrderList = null;
+			window.location = "OrderList.html?goback=" + OrderList;
+		})
+		//页面跳转到信用列表;
+		$("#privateCredit").on("click",function(){
+			var privateCredit = null;
+			window.location = "privateCredit.html?goback=" + privateCredit;
+		})
+		
+	})
+	
+</script>
+</body>
+</html>

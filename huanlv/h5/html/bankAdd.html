@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>添加银行卡</title>
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+<!-- APP自用CSS -->
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/hl_style.css">
+<!--<script src="../js/zepto.min.js"></script>-->
+</head>
+<body class="hl_mainbg">
+<header class="mui-bar mui-bar-nav hl_headerSty">
+   <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+   <h1 class="mui-title">添加银行卡</h1>
+   <!--<a href="javascript:;" class='mui-pull-right' id="submit">提交</a>-->
+</header>
+<!-- 占位 -->
+<section class="mt50"><p class="hl_bespeakTips1"></p></section>
+<div class="hl-collapse-content">
+  	<div class="hl_input_group">
+  		<div class="hl_input_row" >
+			<!-- <input type="number" placeholder="请输入开户银行" id="bankName"> -->
+			<select id="bankName">
+				<option>请选择开户行</option>
+			</select>
+		</div>
+		<div class="hl_input_row">
+			<input type="text" placeholder="请输入本人名下的储蓄卡号" id="cardCode" class="checkHasValue">
+		</div>
+		<div class="hl_input_row">
+			<input type="tel" placeholder="开户行银行卡预留手机号" maxlength="11" id="phoneNo" class="checkHasValue">
+		</div>
+		<div class="hl_input_row">
+			<input type="text" class="hl_input_yanz checkHasValue" placeholder="请输入图片验证码" id="picCode" maxlength="6">
+            <span class="hl_label_yzm"><img src="../images/ls.png" id="sessionId"></span>
+		</div>
+		<div class="hl_input_row">
+			<input type="text" placeholder="请输入信息验证码" id="smsCode" maxlength="6" class="checkHasValue">
+            <span class="hl_r_bnt" id="hl_r_bnt">获取短信验证码</span>
+		</div>
+		<!--银行卡正面照-->
+		<div id="bankCardBox">
+            <div id="box">
+                <img src="../images/addBankImg.png" id="bankCardBoxImg"/>
+                <input accept="image/*" type="file" capture="camera" onfocus="this.blur()" value="" class="hl-bankCard-img">
+            </div>
+            <p>银行卡正面照</p>
+        </div>
+		<div class="hl_input_row" style="margin: 15px 20px 0 0;">
+     		<i class="checkedOn hl_agree"></i><a href='agreementBank.html' class="hl_bankAgree">同意欢旅金服支付及代扣服务协议</a>
+		</div>
+	</div>
+	<input id="submit" type="button" class="btn" value="完成" disabled="disabled" style="opacity: 1;margin-bottom: 20px;">
+</div>
+<!--公共弹窗-->
+<div class="popupbox">
+    <div class="bg"></div>
+    <div class="popbox">
+      <div class="content" id="content">您输入的密码或手机验证码不正确，请确认后重新输入。</div>
+      <div class="orc dn">
+          <div class="cancel">取消</div>
+          <div class="ok">确认</div>
+      </div>
+      <div class="justok">确认</div>
+    </div>
+</div>
+<!--loading-->
+<div id="tipsBox">
+    <div>
+        <img src="../images/loading_big.gif"/>
+        <p id="tipsText" style="visibility: hidden;">身份证正面解析中,请稍后!</p>
+    </div>
+</div>
+<!--jquery类库-->
+<script src="../js/jquery-1.9.1.min.js"></script>
+<!--mui自带类库-->
+<script src="../js/mui.min.js"></script>
+<!--MD5加密类库-->
+<script src="../js/md5-min.js"></script>
+<!--公共方法类库-->
+<script src="../js/common.js"></script>
+<script>
+	mui.init({
+		swipeBack:true //启用右滑关闭功能
+	});
+
+var rNum = 0;
+
+//输入框只能是数字；
+//$("#cardCode").numeral();
+$("#phoneNo").numeral();
+$("#picCode").numeral();
+$("#smsCode").numeral();
+var cardCodeArr = new Array(6),cardCodeIndex=0,preLength=0;
+$("#cardCode").bind('input',function(){
+    var str = $(this).val().split(' ').join('');
+    if(preLength<str.length){
+        preLength = str.length;
+        if(str.charAt(str.length-1) > '9'||str.charAt(str.length-1) < '0'){
+            cardCodeIndex = 0;
+            cardCodeArr.length = 0;
+            cardCodeArr = new Array(6);
+            $(this).val('');
+            return;
+        }
+        cardCodeArr.splice(cardCodeIndex,1,str.substr(cardCodeIndex*4,4)); 
+        if(str.length!=0&&str.length%4==0){
+            cardCodeIndex++;
+        }
+        $(this).val(cardCodeArr.join(' ').trimRight());
+    }else{
+        preLength = str.length; 
+        cardCodeIndex = Math.floor(str.length/4);
+        for(var i=cardCodeIndex; i<cardCodeArr.length;i++){
+            cardCodeArr.splice(i,1,null);
+        }
+    }
+//    console.log(cardCodeArr);
+});
+$(function(){
+	//==================读取本地缓存;判断是否登录;
+	gotologin();
+	//==================从缓存中获取userId; 
+	var userId;
+	//判断用户登录状态,如果是已登录,读取
+	if( getLoginStatus() ){
+		//获取用户userId;
+		userId = getLocal("userId")|| getCookie( "userId");
+	}
+	//==================获取银行卡列表;
+	function getBankList(){
+		var aRequestData ;
+		httpAjax("get","bank/all", aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);  
+		function aSuccessFunc(msg){
+			var str = '';
+			for( var j in msg.data){
+				str += "<option id=" + msg.data[j].id +">" + msg.data[j].bankName +"</option>";
+			}
+			$("#bankName").append(str);
+		}
+		function aErrorFunc(){
+			
+		}
+	}
+	getBankList();
+	
+	//获取银行ID及银行名称;
+	var bankId, bankName;
+	$("#bankName").on("change",function(){
+		bankId = $(this).find("option").not(function(){ return !this.selected }).attr("id");
+		bankName = $(this).find("option").not(function(){ return !this.selected }).val();
+	});
+	
+  	//=================获取图片验证码;
+    function getSession(){
+		rNum = randomNum(8);
+        $("#sessionId").attr( "src" , CONST_SERVER_DOMAIN + 'captcha/' + rNum );
+    }
+    getSession();
+    $("#sessionId").on("touchend",function(){
+		if( isClick ){
+			//提交之前验证
+			if( $("#bankName").val() == "请选择开户行" ){
+				mui.alert( popupTIPS.tips30 , '提示' );
+				return;
+			}
+			//判断有没有输入卡号;
+			if( $("#cardCode").val() == "" ){
+				mui.alert( popupTIPS.tips31 , '提示' );
+				return;
+			}
+			//判断有没有输入手机号;
+			if( $("#phoneNo").val() == "" ){
+				mui.alert( popupTIPS.tips32 , '提示' );
+				return;
+			}else if(!reg.test( $("#phoneNo").val() )){
+				mui.alert( popupTIPS.tips38 , '提示' );
+				return;	
+			}
+			//图片验证码请求方法;
+			getSession();
+		}
+		
+    })
+	
+	//================获取短信验证码
+	var cdNum = 0;
+	$("#hl_r_bnt").on("touchend",function(){
+		if( isClick ){			
+			//验证调用;
+			/*if( !veriFication() ){
+				return false;
+			};*/
+			//提交之前验证
+			if( $("#bankName").val() == "请选择开户行" ){
+				mui.alert( popupTIPS.tips30 , '提示' );
+				return;
+			}
+			//判断有没有输入卡号;
+			if( $("#cardCode").val() == "" ){
+				mui.alert( popupTIPS.tips31 , '提示' );
+				return;
+			}
+			//判断有没有输入手机号;
+			if( $("#phoneNo").val() == "" ){
+				mui.alert( popupTIPS.tips32 , '提示' );
+				return;
+			}else if(!reg.test( $("#phoneNo").val() )){
+				mui.alert( popupTIPS.tips38 , '提示' );
+				return;	
+			}
+			//判断有没有图片验证码;
+			if( $("#picCode").val() == "" ){
+				mui.alert( popupTIPS.tips33 , '提示' );
+				return;
+			}
+			
+			//倒计时提示
+			if( cdNum > 0 ){
+				//console.log(123);
+				return;
+			}
+			cdNum = 60;
+			$("#hl_r_bnt").html("再次获取(" + cdNum + ")");
+			var cd = setInterval(function(){
+				cdNum--;
+				if( cdNum < 0  ){
+					cdNum = 0;
+					$(".hl_r_bnt").html("再次获取");
+					clearInterval(cd);
+				}else{
+					$("#hl_r_bnt").html("再次获取(" + cdNum + ")");
+				}
+			},1000)
+			
+			//获取短信调用;
+			getSms();
+		}
+    })
+    function getSms(){
+		// 获取参数值
+		// md5
+		var param = {};
+		param["sessionId"] = rNum;
+		param["picCode"] = $("#picCode").val();
+		param["mobile"] = $("#phoneNo").val();
+		param["apiVersion"] = apiVersion;
+		//md5加密;
+		param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+     	
+        var aRequestData = param;
+		//ajax请求;
+		httpAjax('POST','common/sendSms', aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);  
+		//成功回调;
+        function aSuccessFunc(data){
+			if( data.state == "S"){
+				// console.log( data.msg );
+			}
+			if( data.state == "F" ){
+				mui.alert( data.msg , '提示' );
+			}
+        }
+		//失败回调;
+        function aErrorFunc(){
+			
+        }
+        
+    }
+	
+	//图片处理上传
+    var fileObjArray = new Array(1);
+    var fileKeyName = ['bankImage'];
+    $('.hl-bankCard-img').bind('change', function (e){
+        var file = e.target.files[0];
+        var _this = this;
+        if (file && /^image\//i.test(file.type)) {      
+            var reader = new FileReader();          
+            reader.onloadend = function () {
+                // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
+                var dataURL = reader.result;
+                var img = new Image();
+                img.onload = function(){
+                    var canvasDataURL = dataURL;
+                    // 当图片大于2M时, 就宽度压缩成 900px, 高度按比例计算
+                    // 压缩质量可以根据实际情况调整
+                    if(file.size >= 2*1024*1024){
+                        var w = Math.min(800, img.width);
+                        var h = img.height * (w / img.width);
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');                      
+                        // 设置 canvas 的宽度和高度
+                        canvas.width = w;
+                        canvas.height = h;                      
+                        // 把图片绘制到 canvas 中
+                        ctx.drawImage(img, 0, 0, w, h);                     
+                        // 取出 base64 格式数据
+                        canvasDataURL = canvas.toDataURL('image/jpeg',0.9); 
+                    }
+                    var fileName = fileKeyName[0];
+                    var data = dataURIToOBJ(fileName,canvasDataURL);
+                    fileObjArray.splice(0,1,data);
+                    console.log(data);
+                    $('#bankCardBoxImg').attr("src", canvasDataURL);
+                    $('#bankCardBoxImg').css({opacity: 1,width: 'auto',height: $('#box').height()});
+                }
+                img.src = dataURL;
+                // 插入到 DOM 中预览
+                // ...
+                //document.body.appendChild(img);
+            };          
+            // 读出base64格式
+            reader.readAsDataURL(file);
+        }
+    });
+    //直接读取canvas数据
+    function canvasToData(canvasObj,fileName){                     
+        // 取出 base64 格式数据
+        var canvasDataURL = canvasObj.toDataURL('image/jpeg',0.9); 
+        var data = dataURIToOBJ(fileName,canvasDataURL);
+        return data;
+    }
+    function dataURIToOBJ(fileName,dataURI){//URL数据转存处理
+        var dataString = dataURI.split(',')[1];
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        var obj = {};
+        obj.name = fileName + (mimeString == 'image/jpeg'?'.jpg':'.png');
+        obj.type = mimeString;
+        obj.data = encodeURIComponent(dataString);//安全起见 编码
+        return {'keyName': fileName, 'data': obj};
+    }
+    function sendImgToServer(url,fileDataArray,parameterObj,callBack){//发送图片到服务器
+        var fd = new FormData();
+        var param = {};
+        for(var i in parameterObj){
+            param[i]= parameterObj[i];
+        }
+        param['md5Sign'] = hex_md5(md5seri(param)).toUpperCase();//MD5加密
+        for(var i in param){
+            fd.append(i, param[i]);
+        }
+        //后端接口完成后正式使用后取消注释
+        for(var i=0; i<fileDataArray.length; i++){
+            fd.append(fileDataArray[i]['keyName'], JSON.stringify(fileDataArray[i]['data']));
+        }
+        $.ajax({
+            type: 'POST',
+            url: CONST_SERVER_DOMAIN + url,
+            data: fd,
+            processData: false,
+            contentType: false,
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function(evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = evt.loaded / evt.total;
+                        console.log('进度', percentComplete);
+                    }
+                }, false);
+                return xhr;
+            }
+        }).success(function (res) {
+            //console.log(res);
+            callBack&&callBack(res);
+        }).error(function (err) {
+            console.error(err);
+            $('#tipsBox').css({'display': 'none'});
+            isFirstClick = true;
+        });
+    }
+    var isFirstClick = true;//防止多次点击
+    $("#submit").on("touchend", function(e){
+        if(!isFirstClick) return;
+        if(!fileObjArray[0]){
+            mui.alert(popupTIPS.tips34);
+            return;
+        }
+        $('#tipsBox').css({'display': 'block'});
+        isFirstClick = false;
+        if($('.btn').hasClass('btn-default')) return;
+        //验证调用;
+        if( !veriFication()){ 
+            $('#tipsBox').css({'display': 'none'}); 
+            isFirstClick = true;
+            return false;
+        } 
+        if(!$(".hl_agree").hasClass('checkedOn')){
+            $('#tipsBox').css({'display': 'none'});
+            isFirstClick = true;
+            //同意欢旅金服支付协议
+            mui.alert( popupTIPS.tips35 , '提示');
+            return;
+        } 
+        //设置参数;
+        var data = {apiVersion: apiVersion,
+                    devName: devName,
+                    userId: userId,
+                    bankId: bankId,
+                    bankName: bankName,
+                    cardCode: $("#cardCode").val(),
+                    phoneNo: $("#phoneNo").val(),
+                    smsCode: $("#smsCode").val(),
+                    picCode: $("#picCode").val(),
+                    sessionKey: rNum
+                   };
+        //银行卡验证
+        if(!checkBankCard(data.cardCode.split(' ').join(''))){
+            mui.alert( '请输入正确的银行卡号' , '提示');
+            return;
+        }
+        sendImgToServer('bank/toapply',fileObjArray,data,callBack);
+        e.preventDefault();
+    }); 
+    function callBack(data){
+        console.log(typeof data);
+        var obj = JSON.parse(data);
+        if( obj['state'] == "S" ){//成功,页面跳转
+            isFirstClick = true;
+            $('#tipsBox').css({'display': 'none'});
+            window.location = "BankList.html";
+        }
+        if( obj['state'] == "F" ){
+            isFirstClick = true;
+            $('#tipsBox').css({'display': 'none'});
+            mui.alert( obj['msg'] , '提示',function(){
+                // window.location = "privateCreLight.html";
+            });
+        }
+    }
+	
+	//隐藏弹窗提示;
+	$(".justok").on("touchend",function(e){
+		//console.log( 456 );
+		$(".popupbox").hide();
+		//$("#content").text("");
+		e.preventDefault();
+	})
+	$('#tipsBox').bind('touchmove',function(){
+        return false;
+    });
+})
+
+//前端校验;
+//判断有没有选择银行卡;
+function veriFication(){
+	//选择银行卡;
+	if( $("#bankName").val() == "请选择开户行" ){
+		mui.alert( popupTIPS.tips30 , '提示' );
+		return false;
+	}
+	//判断有没有输入卡号;
+	if( $("#cardCode").val() == "" ){
+		mui.alert( popupTIPS.tips31 , '提示' );
+		return false;
+	}
+	//判断有没有输入手机号;
+	if( $("#phoneNo").val() == "" ){
+		mui.alert( popupTIPS.tips32 , '提示' );
+		return false;
+	}
+	//判断有没有图片验证码;
+	if( $("#picCode").val() == "" ){
+		mui.alert( popupTIPS.tips33 , '提示' );
+		return false;
+	}
+	//判断有没有短信验证码;
+	if( $("#smsCode").val() == "" ){
+		mui.alert( popupTIPS.tips36 , '提示' );
+		return false;
+	}
+	return true;
+}
+
+</script>
+<script>
+	$(document).ready(function(){
+		//根据协议勾选状态判断按钮能否点击
+	    var isCheck = true;
+	    $(".hl_agree").click(function(){
+	        var selectP = $(".hl_agree");
+	        isCheck = !isCheck;
+            if (isCheck) {
+               selectP.removeClass("checkedOff").addClass("checkedOn");
+			   $('.btn').removeAttr('disabled');
+               $('.btn').removeClass('btn-default');
+            } else {
+               selectP.removeClass("checkedOn").addClass("checkedOff");
+			   $('.btn').attr('disabled','disabled');
+               $('.btn').addClass('btn-default');
+            }
+	    });
+	});
+</script>
+</body>
+</html>

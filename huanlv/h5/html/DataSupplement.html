@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>资料补件</title>
+<!--标准mui.css-->
+<link rel="stylesheet" href="../css/mui.min.css">
+<!-- APP自用CSS -->
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/hl_style.css">
+<link rel="stylesheet" type="text/css" href="../css/ArkinStylesheet.css">
+<style type="text/css">
+    .hl-student-img, .img-bg {
+        text-indent: 0px; 
+        left: 9px;
+    }
+    .mui-table-view.mui-grid-view .mui-table-view-cell{
+        margin-right: 0px; 
+        padding: 10px 0 0 10px;
+		overflow: inherit;
+    }
+    .mui-input-group:after{
+        height: 0;
+    }
+</style>
+</head>
+<body class="hl_mainbg">
+<header class="mui-bar mui-bar-nav hl_headerSty">
+   <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+   <h1 class="mui-title">资料补件</h1>
+</header>
+<!--资料补件控件-->
+<div class="dataSup" id="dataSup">
+	<div id="basdata" class="mt50">
+    	<!--<div class="mui-input-group arkin">
+    		<div class="mui-input-row pdr0 arkin3 address"><label>内容</label><textarea name="" cols="" rows="2" maxlength='5' class="tr cb2" id='6' placeholder="输入内容"></textarea></div>
+            <div class="mui-input-row pdr0 arkin3 address"><label>内容</label><select name=""><option value="12">12</option><option value="14">14</option></select></div>
+        </div>-->
+        <!--<div class="mui-input-group arkin">
+            <ul class="mui-table-view mui-grid-view mui-came">
+                <li class="mui-table-view-cell mui-media mui-col-xs-6">
+                    <span class="" style="position: relative;background: #fff url(../images/bujianImg.png) no-repeat scroll center 20%; background-size: 100% 100%;" id="hl-student">
+                        <p style="position: absolute;bottom:6px;left: 0;z-index: 99;text-align: center;width:100%;">
+                            哈哈哈哈哈    
+                        </p>
+                    </span>
+                    <img src="" id="showimg" class="img-bg" style="border: 0;display: none;" />
+                    <input accept="image/*" type="file" maxlength=' + data.imgList[i].attLength + ' capture="camera" onfocus="this.blur()" value="拍照" class="hl-student-img" style="opacity:0;" id='jjj'>
+                </li>
+            </ul>
+        </div>-->
+	</div>
+</div>
+<!--图片解析弹窗-->
+<div id="tipsBox">
+    <div>
+        <img src="../images/loading_big.gif"/>
+        <p id="tipsText">资料提交中,请稍后!</p>
+    </div>
+</div>
+<script src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/mui.min.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/md5-min.js"></script>
+<script src="../js/config.js"></script>
+
+<script>
+	$(function(){
+	    var wholeObj = null;//接收到的所有field
+		//读取本地缓存;判断是否登录;
+		gotologin();
+		var userId;
+		if( getLoginStatus() ){
+			userId = getLocal("userId")|| getCookie( "userId");
+		}
+		
+		//参数获取;
+		var PatchId;                     //补件id;
+		var param = {};
+		param["apiVersion"] = apiVersion;
+		param["devName"] = devName;
+		param["userId"] = userId;  //从本地缓存中读取的 userId;
+		//md5加密;
+		param["md5Sign"] = hex_md5( md5seri(param) ).toUpperCase();
+		
+		var aRequestData = param;
+		//获取基础数据列表;
+		httpAjax("POST", "user/getpatch", aRequestData, aSuccessFunc, aErrorFunc, aTimeOut);
+		
+		//请求成功返回数据;
+		function aSuccessFunc( data ){
+			wholeObj = data.data;
+			console.log(data);		
+			if( data.state == "S" ){
+//			    if(data.msg){
+//			       mui.alert(data.msg);
+//			    }
+			    if(!wholeObj['pdsList']) return;
+                messageHandle(wholeObj);//生成keyName及需要上传的数据对象   
+				//创建div,把生成的补件集合放进去, 
+				var oDiv = $("<div class='mui-input-group arkin'></div>");
+				oDiv.data("id", data.data.id );
+				//补件id;
+				PatchId = oDiv.data("id");
+				
+				var html = '';
+				for( var i in data.data.pdsList ){
+					//补件属性集合
+					html += pdsListattType(data.data.pdsList[i]);
+				}
+				//console.log( html );
+				oDiv.html( html );
+				
+				//创建提交按钮;
+				var btnBox = $('<div class="hl_btn hl_infro mt44"></div>');
+				var btn = $('<a href="javascript:;" class="btn btn_blue" id="next">下一步</a>');
+				btnBox.append( btn );
+				
+				//把创建生成的补件集合Div,及提交按钮放进盒子中;
+				$("#basdata").append( oDiv );
+				$("#basdata").append( btnBox );
+				for(var i=0; i<data.data.pdsList.length; i++){//绑定date输入框
+				    if(data.data.pdsList[i]['attType'] == "3"){ 
+                        $("#" + data.data.pdsList[i].field).bind('change', function(){
+                            $(this)[0].nextElementSibling.value = $(this).val();
+                        });
+                    }
+				}
+				$('.mui-table-view-cell').on('touchstart',function(){
+                    nowIndex = $(this).index();
+                    console.log(nowIndex);
+                });
+                $('.hl-student-img').bind('change', function (e){
+                    var file = e.target.files[0];
+                    var _this = this;
+                    if (file && /^image\//i.test(file.type)) {      
+                        var reader = new FileReader();          
+                        reader.onloadend = function () {
+                            // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
+                            var dataURL = reader.result;
+                            var img = new Image();
+                            img.onload = function(){
+                                var canvasDataURL = dataURL;
+                                // 当图片大于2M时, 就宽度压缩成 900px, 高度按比例计算
+                                // 压缩质量可以根据实际情况调整
+                                if(file.size >= 2*1024*1024){
+                                    var w = Math.min(800, img.width);
+                                    var h = img.height * (w / img.width);
+                                    var canvas = document.createElement('canvas');
+                                    var ctx = canvas.getContext('2d');                  
+                                    // 设置 canvas 的宽度和高度
+                                    canvas.width = w;
+                                    canvas.height = h;                      
+                                    // 把图片绘制到 canvas 中
+                                    ctx.drawImage(img, 0, 0, w, h);                     
+                                    // 取出 base64 格式数据
+                                    canvasDataURL = canvas.toDataURL('image/jpeg',0.9); 
+                                }
+                                var fileName = fileKeyName[nowIndex];
+                                var data = dataURIToOBJ(fileName,canvasDataURL);
+                                fileObjArray.splice(nowIndex,1,data);
+                                console.log(data);
+                                $('.img-bg').eq(nowIndex).attr("src", canvasDataURL);
+                                $('.img-bg').eq(nowIndex).css({'display': 'block'});
+                            }
+                            img.src = dataURL;
+                            // 插入到 DOM 中预览
+                            // ...
+                            //document.body.appendChild(img);
+                        };          
+                        // 读出base64格式
+                        reader.readAsDataURL(file);
+                    }
+                });
+                $('#next').click(uploadFile);//如果成功返回数据则绑定提交事件
+			}
+		}
+		//请求失败返回信息;
+		function aErrorFunc(data){
+			if( data.data == "F" ){
+				//console.log( data.msg );
+			}	
+		}
+		
+		var fileObjArray = new Array();
+        var fileKeyName = [];//'stucoversimg','cardimgPos','stupageimg','handCardimg'
+        var nowIndex = 0;
+        //非图片信息-----文本信息
+        var notImgMessage = [];
+        //将补件组合提交上传给后台;
+        function messageHandle(responseObj){
+            for(var i=0; i<responseObj.pdsList.length; i++){  
+                if(responseObj.pdsList[i]['attType'] == "6"){
+                    fileObjArray.length = responseObj.pdsList[i]['imgList'].length;//补件中图片的个数
+                    for(var j=0; j<responseObj.pdsList[i]['imgList'].length; j++){
+                        fileKeyName.push(responseObj.pdsList[i]['imgList'][j].field);
+                    }
+                }else{
+                    notImgMessage.push(responseObj.pdsList[i]['field']);
+                }
+            }
+        }
+        
+        //直接读取canvas数据
+        function canvasToData(canvasObj,fileName){                     
+            // 取出 base64 格式数据
+            var canvasDataURL = canvasObj.toDataURL('image/jpeg',0.9); 
+            var data = dataURIToOBJ(fileName,canvasDataURL);
+            return data;
+        }
+        function dataURIToOBJ(fileName,dataURI){//URL数据转存处理
+            var dataString = dataURI.split(',')[1];
+            var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            var obj = {};
+            obj.name = fileName + (mimeString == 'image/jpeg'?'.jpg':'.png');
+            obj.type = mimeString;
+            obj.data = encodeURIComponent(dataString);//安全起见 编码
+            return {'keyName': fileName, 'data': obj};
+        }
+        function sendImgToServer(url,fileDataArray,parameterObj,callBack){//发送图片到服务器
+            var fd = new FormData(); 
+            var dataArray = {};
+            for(var i in parameterObj){//imgs
+                fd.append(i, parameterObj[i]);
+            }
+            if(fileDataArray.length){
+                for(var i=0; i<fileDataArray.length; i++){
+                    dataArray[i] = fileDataArray[i]['data'];
+                }
+                fd.append('imgs' ,JSON.stringify(dataArray));
+            }
+            $.ajax({
+                type: 'POST',
+                url: CONST_SERVER_DOMAIN + url,
+                data: fd,
+                processData: false,
+                contentType: false,
+                xhr: function(){
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener("progress", function(evt) {
+                        if (evt.lengthComputable) {
+                            var percentComplete = evt.loaded / evt.total;
+                            console.log('进度', percentComplete);
+                        }
+                    }, false);
+                    return xhr;
+                }
+            }).success(function (res) {
+                //console.log(res);
+                callBack&&callBack(res);
+            }).error(function (err) {
+                console.error(err);
+                isFirstClick = true;
+                $('#tipsBox').css({'display': 'none'});
+            });
+        }
+        function callBack(res){//返回值
+            console.log(typeof res);
+            var obj = JSON.parse(res);
+            if(obj['state'] == 'S'){//成功,页面跳转
+                isFirstClick = true;
+                $('#tipsBox').css({'display': 'none'});
+                mui.alert('补件完成','提示');
+                window.location = 'privateCredit.html';
+            }else if(obj['state'] == 'F'){//失败,提示
+                isFirstClick = true;
+                $('#tipsBox').css({'display': 'none'});
+                mui.alert(obj['msg'],'提示');
+            }
+        }
+        var isFirstClick = true;
+        function uploadFile(){//点击下一步 执行
+            if(!isFirstClick) return;
+            for(var i=0; i<fileObjArray.length; i++){
+                if(fileObjArray[i] === undefined){
+                    mui.alert(popupTIPS.tips22);
+                    return;
+                }
+            }
+            isFirstClick = false;
+            $('#tipsBox').css({'display': 'block'});
+            //获取其他数据
+            var data = {
+                apiVersion: apiVersion,
+                devName: devName,
+                id: wholeObj.id,
+                userId: getLocal("userId")|| getCookie( "userId"),
+            }
+            var param = {};
+            for(var i in data){
+                param[i]= data[i];
+            }
+            param['md5Sign'] = hex_md5(md5seri(param)).toUpperCase();//MD5加密
+            for(var i=0; i<notImgMessage.length; i++){
+                console.log($("#" + notImgMessage[i]).val());
+                if(!$("#" + notImgMessage[i]).val()){
+                    mui.alert(popupTIPS.tips3);
+                    return;
+                }
+                param[notImgMessage[i]] = $("#" + notImgMessage[i]).val();
+            }
+            sendImgToServer('user/upatch',fileObjArray,param,callBack);
+        }
+        $('#tipsBox').bind('touchmove',function(){
+            return false;
+        });
+	});
+</script>
+</body>
+</html>
